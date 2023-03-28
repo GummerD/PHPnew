@@ -41,7 +41,7 @@ switch ($argv) {
         break;
 }
 
-// короче через match:
+// или сделать короче через match:
 echo match($argv[1]) {
     'user' => $user,
     'post' => $post,
