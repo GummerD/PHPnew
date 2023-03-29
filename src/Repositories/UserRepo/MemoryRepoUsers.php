@@ -3,6 +3,7 @@ namespace GummerD\PHPnew\Repositories\UserRepo;
 
 use GummerD\PHPnew\Exceptions\UsersExceptions\UsersExceptionsMamoryRepo;
 use GummerD\PHPnew\Models\User;
+use GummerD\PHPnew\Models\UUID;
 
 class MemoryRepoUsers{
 
@@ -20,7 +21,9 @@ class MemoryRepoUsers{
     }
 
     public function getUserId($id)
-    {
+    {   
+        $id = new UUID((string)$id);
+        
         foreach($this->data as $user)
         {   
             if($id  === $user->getId())

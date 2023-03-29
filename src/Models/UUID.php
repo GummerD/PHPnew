@@ -10,7 +10,7 @@ class UUID
     ){
         if(!uuid_is_valid($uuidString)){
             throw new InvalidArgumentException(
-                "Неправльный формат переменной UUID: {$this->uuidString}" 
+                "Неправльный формат переменной - UUID: {$this->uuidString}" . PHP_EOL 
             );
         }
     }

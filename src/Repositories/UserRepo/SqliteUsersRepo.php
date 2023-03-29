@@ -49,10 +49,12 @@ class SqliteUsersRepo
      * @throws UserNotFoundException
      * @return User
      */
-    public function getUuid(UUID $id): User
-    {
+    public function getUuid($id): User
+    {   
+        $id = new UUID($id);
+
         $statement = $this->connection->prepare(
-            "SELECT * FROM users WHERE id = ?"
+            "SELECT * FROM users WHERE id = :id"
         );
 
         $statement->execute([
