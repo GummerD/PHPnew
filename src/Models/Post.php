@@ -3,8 +3,8 @@ namespace GummerD\PHPnew\Models;
 
 class Post
 {
-    protected ?int $id;
-    protected ?int $owner_id;
+    protected ?string $id;
+    protected ?string $owner_id;
     protected ?string $title;
     protected ?string $text;
 
@@ -22,7 +22,7 @@ class Post
             Статья номер: {$this->id},
             id пользователя: {$this->owner_id},
             Заголовок поста: {$this->title},
-            Текст поста: {$this->text}. <br>
+            Текст поста: {$this->text}. 
         ";
     }
 
@@ -49,7 +49,7 @@ class Post
     /**
      * Get the value of owner_id
      */ 
-    public function getOwner_id()
+    public function getOwnerId()
     {
         return $this->owner_id;
     }
@@ -59,7 +59,7 @@ class Post
      *
      * @return  self
      */ 
-    public function setOwner_id($owner_id)
+    public function setOwnerId($owner_id)
     {
         $this->owner_id = $owner_id;
 

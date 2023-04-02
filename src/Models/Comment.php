@@ -3,9 +3,9 @@ namespace GummerD\PHPnew\Models;
 
 class Comment
 {
-    protected ?int $id;
-    protected ?int $owner_id;
-    protected ?int $post_id;
+    protected ?string $id;
+    protected ?string $owner_id;
+    protected ?string $post_id;
     protected ?string $text;
 
     public function __construct($id, $owner_id, $post_id, $text)
@@ -49,7 +49,7 @@ class Comment
     /**
      * Get the value of owner_id
      */ 
-    public function getOwner_id()
+    public function getOwnerId()
     {
         return $this->owner_id;
     }
@@ -59,7 +59,7 @@ class Comment
      *
      * @return  self
      */ 
-    public function setOwner_id($owner_id)
+    public function setOwnerId($owner_id)
     {
         $this->owner_id = $owner_id;
 
@@ -69,7 +69,7 @@ class Comment
     /**
      * Get the value of post_id
      */ 
-    public function getPost_id()
+    public function getPostId()
     {
         return $this->post_id;
     }
@@ -79,7 +79,7 @@ class Comment
      *
      * @return  self
      */ 
-    public function setPost_id($post_id)
+    public function setPostId($post_id)
     {
         $this->post_id = $post_id;
 
