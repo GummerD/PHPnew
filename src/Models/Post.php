@@ -1,10 +1,12 @@
 <?
 namespace GummerD\PHPnew\Models;
 
+use GummerD\PHPnew\Models\UUID;
+
 class Post
 {
-    protected ?string $id;
-    protected ?string $owner_id;
+    protected ?UUID $id;
+    protected ?UUID $owner_id;
     protected ?string $title;
     protected ?string $text;
 
@@ -29,7 +31,7 @@ class Post
     /**
      * Get the value of id
      */ 
-    public function getId()
+    public function getId(): UUID
     {
         return $this->id;
     }
@@ -39,7 +41,7 @@ class Post
      *
      * @return  self
      */ 
-    public function setId($id)
+    public function setId($id): self
     {
         $this->id = $id;
 
@@ -49,7 +51,7 @@ class Post
     /**
      * Get the value of owner_id
      */ 
-    public function getOwnerId()
+    public function getOwnerId(): UUID
     {
         return $this->owner_id;
     }
@@ -59,7 +61,7 @@ class Post
      *
      * @return  self
      */ 
-    public function setOwnerId($owner_id)
+    public function setOwnerId($owner_id): self
     {
         $this->owner_id = $owner_id;
 
@@ -70,7 +72,7 @@ class Post
     /**
      * Get the value of title
      */ 
-    public function getTitle()
+    public function getTitle(): string
     {
         return $this->title;
     }
@@ -80,7 +82,7 @@ class Post
      *
      * @return  self
      */ 
-    public function setTitle($title)
+    public function setTitle($title): self
     {
         $this->title = $title;
 
@@ -90,7 +92,7 @@ class Post
     /**
      * Get the value of text
      */ 
-    public function getText()
+    public function getText(): string
     {
         return $this->text;
     }
@@ -100,7 +102,7 @@ class Post
      *
      * @return  self
      */ 
-    public function setText($text)
+    public function setText($text): self
     {
         $this->text = $text;
 

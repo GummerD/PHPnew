@@ -4,6 +4,7 @@ namespace GummerD\PHPnew\Repositories\CommentsRepo;
 
 
 use PDO;
+use GummerD\PHPnew\Models\UUID;
 use GummerD\PHPnew\Models\Comment;
 use GummerD\PHPnew\Exceptions\CommentsExceptions\CommentNotFoundException;
 use GummerD\PHPnew\Interfaces\IRepositories\CommentsRepositoriesInterface;
@@ -27,7 +28,7 @@ class SqliteCommentsRepo implements CommentsRepositoriesInterface
      */
     public function save(Comment $comment): void
     {
-        print_r($comment);
+        //print_r($comment);
 
         $statement = $this->connection->prepare(
             "INSERT INTO comments (id, owner_id, post_id, text) 
@@ -58,9 +59,9 @@ class SqliteCommentsRepo implements CommentsRepositoriesInterface
 
         foreach ($results as $result) {
             echo new Comment(
-                $result['id'],
-                $result['owner_id'],
-                $result['post_id'],
+                new UUID($result['id']),
+                new UUID($result['owner_id']),
+                new UUID($result['post_id']),
                 $result['text']
             );
         }
@@ -117,9 +118,9 @@ class SqliteCommentsRepo implements CommentsRepositoriesInterface
     public function getResult($result): Comment
     {
         return new Comment(
-            $result['id'],
-            $result['owner_id'],
-            $result['post_id'],
+            new UUID($result['id']),
+            new UUID($result['owner_id']),
+            new UUID($result['post_id']),
             $result['text']
         );
     }

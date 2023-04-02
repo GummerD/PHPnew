@@ -3,6 +3,7 @@ namespace GummerD\PHPnew\Repositories\PostsRepo;
 
 use PDO;
 use GummerD\PHPnew\Models\Post;
+use GummerD\PHPnew\Models\UUID;
 use GummerD\PHPnew\Exceptions\PostsExceptions\PostNotFoundException;
 use GummerD\PHPnew\Interfaces\IRepositories\PostsRepositoriesInterface;
 
@@ -57,8 +58,8 @@ class SqlitePostsRepo implements PostsRepositoriesInterface
         
         foreach( $results as $result){
            echo new Post(
-                $result['id'],
-                $result['owner_id'],
+                new UUID($result['id']),
+                new UUID($result['owner_id']),
                 $result['title'],
                 $result['text']
             );  
@@ -126,8 +127,8 @@ class SqlitePostsRepo implements PostsRepositoriesInterface
     public function getResult($result):Post
     {
         return new Post(
-            $result['id'],
-            $result['owner_id'],
+            new UUID($result['id']),
+            new UUID($result['owner_id']),
             $result['title'],
             $result['text']
         );  
