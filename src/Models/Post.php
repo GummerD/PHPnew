@@ -10,7 +10,7 @@ class Post
     protected ?string $title;
     protected ?string $text;
 
-    public function __construct($id, $owner_id, $title, $text)
+    public function __construct($id = null, $owner_id = null, $title = null, $text = null)
     {
         $this->id = $id;
         $this->owner_id = $owner_id;

@@ -10,7 +10,7 @@ class Comment
     protected ?UUID $post_id;
     protected ?string $text;
 
-    public function __construct($id, $owner_id, $post_id, $text)
+    public function __construct($id = null, $owner_id = null, $post_id = null, $text = null)
     {
        $this->id = $id;
        $this->owner_id = $owner_id;

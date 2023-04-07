@@ -17,9 +17,9 @@ class User
      * @param Name|null $name
      */
     public function __construct(
-        protected ?UUID $id, 
-        protected ?string $username,
-        protected ?Name $name
+        protected ?UUID $id = null, 
+        protected ?string $username = null,
+        protected ?Name $name = null
         )
     {}
         
