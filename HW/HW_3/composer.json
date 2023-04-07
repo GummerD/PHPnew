@@ -1,0 +1,26 @@
+{
+    "name": "gummer/php-new",
+    "autoload": {
+        "psr-4": {
+            "GummerD\\PHPnew\\": "src/"
+        }
+    },
+    "authors": [{
+        "name": "GummerD",
+        "email": "denis_gummer@mail.ru"
+    }],
+    "require": {
+        "fakerphp/faker": "^1.21",
+        "ramsey/uuid": "^4.7",
+        "symfony/polyfill-uuid": "^1.27",
+        "phpunit/phpunit": "^10.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^10.0"
+    },
+    "scripts": {
+        "test": "vendor\\bin\\phpunit tests --testdox --colors",
+        "test_HW_comments": "vendor\\bin\\phpunit tests\\HW_3\\CommentsTest --testdox --colors",
+        "test_HW_posts": "vendor\\bin\\phpunit tests\\HW_3\\PostsTests --testdox --colors"
+    }
+}
