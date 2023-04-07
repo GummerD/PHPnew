@@ -20,6 +20,7 @@
     },
     "scripts": {
         "test": "vendor\\bin\\phpunit tests --testdox --colors",
-        "test_HW": "vendor\\bin\\phpunit tests\\HW_3 --testdox --colors"
+        "test_HW_comments": "vendor\\bin\\phpunit tests\\HW_3\\CommentsTest --testdox --colors",
+        "test_HW_posts": "vendor\\bin\\phpunit tests\\HW_3\\PostsTests --testdox --colors"
     }
 }
