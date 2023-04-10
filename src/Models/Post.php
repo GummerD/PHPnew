@@ -1,19 +1,20 @@
 <?
 namespace GummerD\PHPnew\Models;
 
+use GummerD\PHPnew\Models\User;
 use GummerD\PHPnew\Models\UUID;
 
 class Post
 {
     protected ?UUID $id;
-    protected ?UUID $owner_id;
+    protected ?User $user;
     protected ?string $title;
     protected ?string $text;
 
-    public function __construct($id = null, $owner_id = null, $title = null, $text = null)
+    public function __construct($id = null, $user = null, $title = null, $text = null)
     {
         $this->id = $id;
-        $this->owner_id = $owner_id;
+        $this->user = $user;
         $this->title = $title;
         $this->text = $text;
     }
@@ -21,8 +22,9 @@ class Post
     public function __toString()
     {
         return " 
-            Статья номер: {$this->id},
-            id пользователя: {$this->owner_id},
+            Пост номер: {$this->id},
+            id пользователя: {$this->user->getId()},
+            Имя и фамилия пользователя: {$this->user->getName()->getFirstname()}, {$this->user->getName()->getLastname()},
             Заголовок поста: {$this->title},
             Текст поста: {$this->text}. 
         ";
@@ -51,9 +53,9 @@ class Post
     /**
      * Get the value of owner_id
      */ 
-    public function getOwnerId(): UUID
+    public function getUser(): User
     {
-        return $this->owner_id;
+        return $this->user;
     }
 
     /**
@@ -61,9 +63,9 @@ class Post
      *
      * @return  self
      */ 
-    public function setOwnerId($owner_id): self
+    public function setUser($user): self
     {
-        $this->owner_id = $owner_id;
+        $this->user = $user;
 
         return $this;
     }

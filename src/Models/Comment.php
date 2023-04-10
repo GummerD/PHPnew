@@ -1,13 +1,14 @@
 <?
 namespace GummerD\PHPnew\Models;
 
+use GummerD\PHPnew\Models\User;
 use GummerD\PHPnew\Models\UUID;
 
 class Comment
 {
     protected ?UUID $id;
-    protected ?UUID $owner_id;
-    protected ?UUID $post_id;
+    protected ?User $owner_id;
+    protected ?Post $post_id;
     protected ?string $text;
 
     public function __construct($id = null, $owner_id = null, $post_id = null, $text = null)
@@ -21,9 +22,10 @@ class Comment
     public function __toString()
     {
         return "
-            Номер статьи: {$this->id}
-            Пользователь под номером: {$this->owner_id}
-            Номер поста: {$this->post_id}
+            Номер комментария: {$this->id}
+            Пользователь под номером: {$this->owner_id->getId()}
+            Имя и фамилия: {$this->owner_id->getName()->getFirstname()} {$this->owner_id->getName()->getLastname()}
+            Номер поста: {$this->post_id->getId()}
             Текст: {$this->text}
         ";
     }
@@ -51,7 +53,7 @@ class Comment
     /**
      * Get the value of owner_id
      */ 
-    public function getOwnerId(): UUID
+    public function getOwnerId(): User
     {
         return $this->owner_id;
     }
@@ -71,7 +73,7 @@ class Comment
     /**
      * Get the value of post_id
      */ 
-    public function getPostId(): UUID
+    public function getPostId(): Post
     {
         return $this->post_id;
     }

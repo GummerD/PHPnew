@@ -32,39 +32,40 @@ class SqliteUsersRepo implements UsersRepositoryInterface
     public function save(User $user): void
     {
         $statement = $this->connection->prepare(
-            "INSERT INTO users (id, username, first_name, last_name) VALUES (:id, :username, :first_name, :last_name)"
+            "INSERT INTO users (user_id, username, first_name, last_name) VALUES (:user_id, :username, :first_name, :last_name)"
         );
 
         $statement->execute(
             [
-                ':id' => (string)$user->getId(), 
+                ':user_id' => (string)$user->getId(), 
                 ':username' => $user->getUsername(),
                 ':first_name' => $user->getName()->getFirstname(), 
                 ':last_name' => $user->getName()->getLastname(),
             ]
         );
 
+        echo "Пользователь сохранен";
     }
 
     /**
      * Summary of getUuid
-     * @param UUID $id
+     * @param  $id
      * @throws UserNotFoundException
      * @return User
      */
-    public function getByUserId($id): User
+    public function getByUserId($user_id): User
     {   
-        $id = new UUID($id);
+        $id = new UUID($user_id);
 
         $statement = $this->connection->prepare(
-            "SELECT * FROM users WHERE id = :id"
+            "SELECT * FROM users WHERE user_id = :user_id"
         );
 
         $statement->execute([
-            ":id" => (string)$id,
+            ":user_id" => (string)$user_id,
         ]);
 
-        return $this->getResult($statement);
+        return $this->getResult($statement, 'id', $user_id);
         
     }
 
@@ -84,22 +85,22 @@ class SqliteUsersRepo implements UsersRepositoryInterface
             ":username" => (string)$username,
         ]);
 
-        return $this->getResult($statement);
+        return $this->getResult($statement, 'логином', $username);
     }
 
-    public function getResult(PDOStatement $statement): User
+    public function getResult(PDOStatement $statement, $name, $variable): User
     {
 
         $result = $statement->fetch(PDO::FETCH_ASSOC);
 
         if($result === false){
             throw new UserNotFoundException(
-                "Такого пользователя не существует"
+                "Пользователя с таким {$name}: {$variable} не существует. "
             );
         }
 
         return new User(
-            new UUID($result['id']),
+            new UUID($result['user_id']),
             $result['username'],
             new Name(
                 $result['first_name'],

@@ -4,10 +4,14 @@ namespace GummerD\PHPnew\Repositories\CommentsRepo;
 
 
 use PDO;
+use GummerD\PHPnew\Models\Post;
+use GummerD\PHPnew\Models\User;
 use GummerD\PHPnew\Models\UUID;
 use GummerD\PHPnew\Models\Comment;
+use GummerD\PHPnew\Models\Person\Name;
 use GummerD\PHPnew\Exceptions\CommentsExceptions\CommentNotFoundException;
 use GummerD\PHPnew\Interfaces\IRepositories\CommentsRepositoriesInterface;
+use PDOStatement;
 
 class SqliteCommentsRepo implements CommentsRepositoriesInterface
 {
@@ -31,17 +35,19 @@ class SqliteCommentsRepo implements CommentsRepositoriesInterface
         //print_r($comment);
 
         $statement = $this->connection->prepare(
-            "INSERT INTO comments (id, owner_id, post_id, text) 
-                VALUES (:id, :owner_id, :post_id, :text)
+            "INSERT INTO comments (comment_id, owner_id, post_id, text) 
+                VALUES (:comment_id, :owner_id, :post_id, :text)
             "
         );
-
+    
         $statement->execute([
-            ':id' => $comment->getId(),
-            ':owner_id' => $comment->getOwnerId(),
-            ':post_id' => $comment->getPostId(),
+            ':comment_id' => $comment->getId(),
+            ':owner_id' => $comment->getOwnerId()->getId(),
+            ':post_id' => $comment->getPostId()->getId(),
             ':text' => $comment->getText()
         ]);
+
+        echo "Комментарий сохранен";
     }
     /**
      * Summary of getAll
@@ -50,18 +56,38 @@ class SqliteCommentsRepo implements CommentsRepositoriesInterface
     public function getAllComments(): void
     {
         $statement = $this->connection->prepare(
-            "SELECT * FROM comments"
+            "SELECT * FROM comments
+                LEFT JOIN users
+                    ON comments.owner_id = users.user_id
+                LEFT JOIN posts
+                    ON comments.post_id = posts.post_id
+                "
         );
 
         $statement->execute();
 
         $results = $statement->fetchAll(PDO::FETCH_ASSOC);
 
+        print_r($results);
+
         foreach ($results as $result) {
             echo new Comment(
-                new UUID($result['id']),
-                new UUID($result['owner_id']),
-                new UUID($result['post_id']),
+                new UUID($result['comment_id']),
+                new User(
+                    new UUID($result['owner_id']),
+                    $result['username'],
+                    new Name($result['first_name'], $result['last_name'])
+                ),
+                new Post(
+                    new UUID($result['post_id']),
+                    new User(
+                        new UUID($result['owner_id']),
+                        $result['username'],
+                        new Name($result['first_name'], $result['last_name'])
+                    ),
+                    $result['title'],
+                    $result['text']
+                ),
                 $result['text']
             );
         }
@@ -74,21 +100,21 @@ class SqliteCommentsRepo implements CommentsRepositoriesInterface
     public function getCommentById($id): Comment
     {
         $statement = $this->connection->prepare(
-            "SELECT * FROM comments WHERE id = :id"
+            "SELECT * FROM comments
+                LEFT JOIN users
+                    ON comments.owner_id = users.user_id
+                LEFT JOIN posts
+                    ON comments.post_id = posts.post_id
+                WHERE comment_id = :comment_id
+            "
         );
 
         $statement->execute([
-            ':id' => $id
+            ':comment_id' => $id
         ]);
 
-        $result = $statement->fetch(PDO::FETCH_ASSOC);
-
-        if ($result === false) {
-            throw new CommentNotFoundException(
-                "Комментария с таким id:{$id} нет в БД"
-            );
-        }
-        return $this->getResult($result);
+        
+        return $this->getResult($statement, 'comment_id', $id);
     }
     /**
      * Summary of getPostById
@@ -98,29 +124,49 @@ class SqliteCommentsRepo implements CommentsRepositoriesInterface
     public function getCommentByOwner_id($owner_id): Comment
     {
         $statement = $this->connection->prepare(
-            "SELECT * FROM comments WHERE owner_id = :owner_id"
+            "SELECT * FROM comments
+                LEFT JOIN users
+                    ON comments.owner_id = users.user_id
+                LEFT JOIN posts
+                    ON comments.post_id = posts.post_id 
+                    WHERE owner_id = :owner_id
+                "
         );
 
         $statement->execute([
             ':owner_id' => $owner_id
         ]);
 
+        return $this->getResult($statement, 'пользователем', $owner_id);
+    }
+
+    public function getResult(PDOStatement $statement, $name, $variable): Comment
+    {
         $result = $statement->fetch(PDO::FETCH_ASSOC);
+
         if ($result === false) {
             throw new CommentNotFoundException(
-                "Комментария с таким id пользователя: {$owner_id}, нет в БД"
+                "Комментария с таким {$name}:{$variable} нет в БД"
             );
         }
 
-        return $this->getResult($result);
-    }
-
-    public function getResult($result): Comment
-    {
-        return new Comment(
-            new UUID($result['id']),
+        $user = new User(
             new UUID($result['owner_id']),
+            $result['username'],
+            new Name($result['first_name'], $result['last_name'])
+        );
+
+        $post = new Post(
             new UUID($result['post_id']),
+            $user,
+            $result['title'],
+            $result['text']
+        );
+
+        return new Comment(
+            new UUID($result['comment_id']),
+            $user,
+            $post,
             $result['text']
         );
     }

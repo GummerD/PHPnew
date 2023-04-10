@@ -23,87 +23,71 @@ $connection = new \PDO('sqlite:' . __DIR__ . "/blog.sqlite");
 $uuid = UUID::random();
 
 /* ----------------------------- USER ---------------------------------*/
+try {
+    // Подключение репозитотрия к БД:
+    //$userRepo = new SqliteUsersRepo($connection);
+
+    //echo $userRepo->getByUserId('5b095d52-69a1-4f69-98d2-a8c1d9fce98f');
+    //echo $userRepo->getByUsername('pavel000');
+} catch (\Exception $ex) {
+    echo $ex->getMessage();
+}
+
+
+/* ----------------------------- POST ---------------------------------*/
 
 try {
     // Подключение репозитотрия к БД:
-    $userRepo = new SqliteUsersRepo($connection);
 
-    // переменная для сущности User:
-    $user =  new User(
-        $uuid,
-        $facker->userName(),
-        new Name(
-            $facker->firstName(),
-            $facker->lastName()
-        )
-    );
+    //$userRepo = new SqliteUsersRepo($connection);
+    //$postRepo = new SqlitePostsRepo($connection);
 
-    // сохранение в таблицу users данных о новом пользователе:
-    $userRepo->save($user);
-    
-} catch (\Exception $ex) {
-    echo $ex->getMessage();
-}
+    // получение экземпляра пользователя из БД для использования его в посте
+    //$user = $userRepo->getByUserId(new UUID('25474b66-690a-4005-a461-acc1fb1a2b33'));
+    //print_r($user);
 
-try {
-    // Сохранение в память.
-    // переменная для сущности User:
-    $userInMenory =  new User(
-        $uuid,
-        $facker->userName(),
-        new Name(
-            $facker->firstName(),
-            $facker->lastName()
-        )
-    );
-
-    // сохранение пользователя в память:
-    $userRepoInMemory = new MemoryRepoUsers($userInMenory);
-} catch (\Exception $ex) {
-    echo $ex->getMessage();
-}
-
-
-/*---------------------------------------------- POST -----------------------------------------------*/
-
-
-try {
-    // подключение репозитория Post к БД
-    $postRepo = new SqlitePostsRepo($connection);
-
-    // создание постов в БД
-    $post = new Post(
+    // связываение пользователя и поста:
+    /*$post = new Post(
         UUID::random(),
-        UUID::random(),
+        $user,
         $facker->text(10),
-        $facker->text(30),
-    );
+        $facker->text(50),
+    );*/
 
-    // сохранение в таблицу posts данных о новом пользователе:
-    $postRepo->save($post);
-
+    //$postRepo->save($post);
+    //$postRepo->getAllPosts();
+    //echo $postRepo->getPostById('6f188630-4537-4d19-a04a-fb3ebac499a3');
+    //echo $postRepo->getPostByTitle('Expedita.');
 } catch (\Exception $ex) {
     echo $ex->getMessage();
 }
 
 
-/*---------------------------------------------- COMMENTS -----------------------------------------------*/
-
 try {
-    // подключение репозитория к БД
+    // Подключение репозитотрия к БД:
+
+    $userRepo = new SqliteUsersRepo($connection);
+    $postRepo = new SqlitePostsRepo($connection);
     $commentRepo = new SqliteCommentsRepo($connection);
 
-    // создание комментариев в БД
+    // получение экземпляра пользователя из БД для использования его в посте
+    $user = $userRepo->getByUserId('8356b162-fb45-4b8f-8484-bb459751587b');
+    $post = $postRepo->getPostById('c76ce9e8-786d-45df-b838-34e944447e70');
+    //print_r($user);
+    //print_r($post);
+
+    // связываение пользователя и поста:
     $comment = new Comment(
         UUID::random(),
-        UUID::random(),
-        UUID::random(),
-        $facker->text(30)
+        $user,
+        $post,
+        $facker->text(50),
     );
 
-    // сохранение в таблицу comments данных о новом пользователе:
     $commentRepo->save($comment);
-
+    $commentRepo->getAllComments();
+    //echo $commentRepo->getCommentById('5af0aad5-b937-4266-88f8-882ec177fef7');
+    //echo $postRepo->getPostByTitle('Expedita.');
 } catch (\Exception $ex) {
     echo $ex->getMessage();
 }
