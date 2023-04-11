@@ -2,11 +2,14 @@
 
 namespace GummerD\PHPnew\UnitTests\HW_3\CommentsTest;
 
+use GummerD\PHPnew\Models\Post;
+use GummerD\PHPnew\Models\User;
+use GummerD\PHPnew\Models\UUID;
 use PHPUnit\Framework\TestCase;
 use GummerD\PHPnew\Models\Comment;
+use GummerD\PHPnew\Models\Person\Name;
 use GummerD\PHPnew\Exceptions\CommentsExceptions\CommentNotFoundException;
 use GummerD\PHPnew\Interfaces\IRepositories\CommentsRepositoriesInterface;
-use GummerD\PHPnew\Models\UUID;
 
 /**
  * Summary of SqliteCommentsRepoTest
@@ -41,12 +44,26 @@ class SqliteCommentsRepoTest extends TestCase
 
                     $this->called = true;
 
-                    return new Comment(
-                        new UUID('d7acbea9-7cda-4374-8886-25a18b29d1b4'),
+                    $user = new User(
                         UUID::random(),
+                        'some_username',
+                        new Name('first_name', 'last_name')
+                    );
+
+                    $post = new Post(
                         UUID::random(),
+                        $user,
+                        'some_title',
                         'some_text'
                     );
+
+                    return  new Comment(
+                        UUID::random(),
+                        $user,
+                        $post,
+                        'some_text'
+                    );
+
                 } else {
                     throw new CommentNotFoundException(
                         "Комментария с таким id:{$id} нет в БД"
@@ -61,9 +78,12 @@ class SqliteCommentsRepoTest extends TestCase
                     $this->called = true;
 
                     return new Comment(
-                        new UUID('d7acbea9-7cda-4374-8886-25a18b29d1b3'),
                         UUID::random(),
-                        UUID::random(),
+                        new User(
+                            new UUID('d7acbea9-7cda-4374-8886-25a18b29d1b3'),
+                            'some_username',
+                            new Name('first_name', 'last_name')),
+                        new Post(),
                         'some_text'
                     );
                 } else {
@@ -81,11 +101,13 @@ class SqliteCommentsRepoTest extends TestCase
     }
 
     public function testItSavesCommentInRepository()
-    {
+    {   
+
+
         $comment = new Comment(
             UUID::random(),
-            UUID::random(),
-            UUID::random(),
+            new User(),
+            new Post(),
             'some_text'
         );
 

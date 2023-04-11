@@ -2,11 +2,15 @@
 
 namespace GummerD\PHPnew\UnitTests\HW_3\PostsTest;
 
-use PHPUnit\Framework\TestCase;
 use GummerD\PHPnew\Models\Post;
+use GummerD\PHPnew\Models\User;
+use GummerD\PHPnew\Models\UUID;
+use PHPUnit\Framework\TestCase;
+use GummerD\PHPnew\Models\Person\Name;
 use GummerD\PHPnew\Exceptions\PostsExceptions\PostNotFoundException;
 use GummerD\PHPnew\Interfaces\IRepositories\PostsRepositoriesInterface;
-use GummerD\PHPnew\Models\UUID;
+use PDO;
+use PDOStatement;
 
 /**
  * Summary of SqliteCommentsRepoTest
@@ -43,10 +47,15 @@ class SqlitePostsRepoTest extends TestCase
 
                     return new Post(
                         new UUID('d7acbea9-7cda-4374-8886-25a18b29d1b4'),
-                        UUID::random(),
+                        new User(
+                            UUID::random(),
+                            'some_username',
+                            new Name('some_firstname', 'some_lastname')
+                        ),
                         'some_title',
                         'some_text'
                     );
+
                 } else {
                     throw new PostNotFoundException(
                         "Поста с таким id:{$id} не существует."
@@ -62,7 +71,11 @@ class SqlitePostsRepoTest extends TestCase
 
                     return new Post(
                         UUID::random(),
-                        UUID::random(),
+                         new User(
+                            UUID::random(),
+                            'some_username',
+                            new Name('some_firstname', 'some_lastname')
+                        ),
                         'some_title',
                         'some_text'
                     );
@@ -83,8 +96,12 @@ class SqlitePostsRepoTest extends TestCase
     public function testItSavesPostInRepository()
     {
         $post = new Post(
-            UUID::random(),
-            UUID::random(),
+            new UUID('d7acbea9-7cda-4374-8886-25a18b29d1b4'),
+            new User(
+                UUID::random(),
+                'some_username',
+                new Name('some_firstname', 'some_lastname')
+            ),
             'some_title',
             'some_text'
         );
