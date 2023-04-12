@@ -47,7 +47,7 @@ class SqliteCommentsRepo implements CommentsRepositoriesInterface
             ':text' => $comment->getText()
         ]);
 
-        echo "Комментарий сохранен";
+        echo "Комментарий сохранен. <br>";
     }
     /**
      * Summary of getAll

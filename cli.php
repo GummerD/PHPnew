@@ -85,8 +85,8 @@ try {
     );
 
     $commentRepo->save($comment);
-    $commentRepo->getAllComments();
-    //echo $commentRepo->getCommentById('5af0aad5-b937-4266-88f8-882ec177fef7');
+    //$commentRepo->getAllComments();
+    echo $commentRepo->getCommentById('a6f36bee-741d-4627-8d01-e62b584fe0d8') . '<br>';
     //echo $postRepo->getPostByTitle('Expedita.');
 } catch (\Exception $ex) {
     echo $ex->getMessage();

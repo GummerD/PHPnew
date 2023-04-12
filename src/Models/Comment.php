@@ -22,12 +22,12 @@ class Comment
     public function __toString()
     {
         return "
-            Номер комментария: {$this->id}
-            Пользователь под номером: {$this->owner_id->getId()}
-            Имя и фамилия: {$this->owner_id->getName()->getFirstname()} {$this->owner_id->getName()->getLastname()}
-            Номер поста: {$this->post_id->getId()}
-            Текст: {$this->text}
-        ";
+            Номер комментария: {$this->id} <br>
+            Пользователь под номером: {$this->owner_id->getId()} <br>
+            Имя и фамилия: {$this->owner_id->getName()->getFirstname()} {$this->owner_id->getName()->getLastname()} <br>
+            Номер поста: {$this->post_id->getId()} <br>
+            Текст: {$this->text} <br>
+        " . PHP_EOL;
     }
 
     /**
