@@ -1,5 +1,5 @@
 <?
-namespace GummerD\PHPnew\Exceptions\http\Actions\Interfaces;
+namespace GummerD\PHPnew\http\Actions\Interfaces;
 
 use GummerD\PHPnew\http\Request;
 use GummerD\PHPnew\http\Response\Response;

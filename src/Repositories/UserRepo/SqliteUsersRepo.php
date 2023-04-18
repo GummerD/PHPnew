@@ -7,6 +7,7 @@ use GummerD\PHPnew\Models\User;
 use GummerD\PHPnew\Models\UUID;
 use GummerD\PHPnew\Models\Person\Name;
 use GummerD\PHPnew\Exceptions\UsersExceptions\UserNotFoundException;
+use InvalidArgumentException;
 use PDOStatement;
 
 /**
@@ -55,7 +56,11 @@ class SqliteUsersRepo implements UsersRepositoryInterface
      */
     public function getByUserId($user_id): User
     {   
-        $id = new UUID($user_id);
+        try {
+            $user_id = new UUID($user_id);
+        } catch (InvalidArgumentException $e) {
+            $e->getMessage();
+        }
 
         $statement = $this->connection->prepare(
             "SELECT * FROM users WHERE user_id = :user_id"
@@ -107,5 +112,18 @@ class SqliteUsersRepo implements UsersRepositoryInterface
                 $result['last_name']
             )
         ); 
+    }
+
+    public function delete($id): void
+    {   
+        $id = new UUID($id);
+        
+        $statement = $this->connection->prepare(
+            "DELETE FROM users WHERE user_id = :id" 
+        );
+
+        $statement->execute([
+            ':id'=>(string)$id,
+        ]);
     }
 }

@@ -32,4 +32,5 @@ interface CommentsRepositoriesInterface
      * @return Comment
      */
     public function getCommentByOwner_id($owner_id):Comment;
+    public function delete($id): void;
 }

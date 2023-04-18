@@ -10,6 +10,7 @@ use GummerD\PHPnew\Models\UUID;
 use GummerD\PHPnew\Models\Person\Name;
 use GummerD\PHPnew\Exceptions\PostsExceptions\PostNotFoundException;
 use GummerD\PHPnew\Interfaces\IRepositories\PostsRepositoriesInterface;
+use InvalidArgumentException;
 
 /**
  * Summary of SqlitePostsRepo
@@ -88,8 +89,12 @@ class SqlitePostsRepo implements PostsRepositoriesInterface
      */
     public function getPostById($post_id): Post
     {   
-       
-        $post_id = new UUID($post_id);
+        try {
+            $post_id = new UUID($post_id);
+        } catch (InvalidArgumentException $e) {
+            $e->getMessage();
+        }
+        
         
         $statement = $this->connection->prepare(
             "SELECT * 
@@ -127,8 +132,6 @@ class SqlitePostsRepo implements PostsRepositoriesInterface
 
         return $this->getResult($statement, 'заголовком', $title);
     }
-
-
     public function getResult(PDOStatement $statement, $name, $variable): Post
     {
         $result = $statement->fetch(PDO::FETCH_ASSOC);
@@ -151,5 +154,17 @@ class SqlitePostsRepo implements PostsRepositoriesInterface
             $result['title'],
             $result['text']
         );
+    }
+    public function delete($id): void
+    {   
+        $id = new UUID($id);
+        
+        $statement = $this->connection->prepare(
+            "DELETE FROM posts WHERE post_id = :id" 
+        );
+
+        $statement->execute([
+            ':id'=>(string)$id,
+        ]);
     }
 }

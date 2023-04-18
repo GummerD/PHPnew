@@ -32,4 +32,6 @@ interface PostsRepositoriesInterface{
      */
     public function getPostByTitle($title):Post;
 
+    public function delete($id): void;
+
 }

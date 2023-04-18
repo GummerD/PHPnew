@@ -1,8 +1,8 @@
 <?
 
-namespace GummerD\PHPnew\Exceptions\http\Actions\Users;
+namespace GummerD\PHPnew\http\Actions\Users;
 
-use GummerD\PHPnew\Exceptions\http\Actions\Interfaces\ActionInterface;
+use GummerD\PHPnew\http\Actions\Interfaces\ActionInterface;
 use GummerD\PHPnew\http\Request;
 use GummerD\PHPnew\http\Response\Response;
 use GummerD\PHPnew\http\Response\ErrorResponse;

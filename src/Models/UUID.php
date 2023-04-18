@@ -25,4 +25,9 @@ class UUID
         return $this->uuidString;
     }
 
+    public function uuidString():string
+    {
+        return $this->uuidString;
+    }
+
 }

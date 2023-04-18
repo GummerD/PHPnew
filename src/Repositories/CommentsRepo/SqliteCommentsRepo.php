@@ -4,14 +4,15 @@ namespace GummerD\PHPnew\Repositories\CommentsRepo;
 
 
 use PDO;
+use PDOStatement;
 use GummerD\PHPnew\Models\Post;
 use GummerD\PHPnew\Models\User;
 use GummerD\PHPnew\Models\UUID;
 use GummerD\PHPnew\Models\Comment;
 use GummerD\PHPnew\Models\Person\Name;
+use GummerD\PHPnew\Exceptions\UUID\InvalidArgumentException;
 use GummerD\PHPnew\Exceptions\CommentsExceptions\CommentNotFoundException;
 use GummerD\PHPnew\Interfaces\IRepositories\CommentsRepositoriesInterface;
-use PDOStatement;
 
 class SqliteCommentsRepo implements CommentsRepositoriesInterface
 {
@@ -98,7 +99,13 @@ class SqliteCommentsRepo implements CommentsRepositoriesInterface
      * @return Comment
      */
     public function getCommentById($id): Comment
-    {
+    {   
+        try {
+            $id = new UUID($id);
+        } catch (InvalidArgumentException $e) {
+            $e->getMessage();
+        }
+
         $statement = $this->connection->prepare(
             "SELECT * FROM comments
                 LEFT JOIN users
@@ -169,5 +176,18 @@ class SqliteCommentsRepo implements CommentsRepositoriesInterface
             $post,
             $result['text']
         );
+    }
+
+    public function delete($id): void
+    {   
+        $id = new UUID($id);
+        
+        $statement = $this->connection->prepare(
+            "DELETE FROM comments WHERE comment_id = :id" 
+        );
+
+        $statement->execute([
+            ':id'=>(string)$id,
+        ]);
     }
 }
