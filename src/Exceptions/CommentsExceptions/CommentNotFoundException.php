@@ -1,5 +1,5 @@
 <?
-namespace GummerD\PHPnew\Exceptions\CommentsExceptions;
+namespace GummerD\PHPnew\Exceptions\Container;
 
 /**
  * Summary of PostNotFoundException

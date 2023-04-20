@@ -78,4 +78,9 @@ class MemoryRepoUsers implements UsersRepositoryInterface
 
         throw new UsersExceptionsMamoryRepo("Нет такого пользователя: {$username}", 404);
     }
+
+    public function delete($id): void
+    {
+        
+    }
 }

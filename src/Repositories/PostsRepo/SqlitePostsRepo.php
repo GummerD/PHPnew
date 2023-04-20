@@ -95,7 +95,6 @@ class SqlitePostsRepo implements PostsRepositoriesInterface
             $e->getMessage();
         }
         
-        
         $statement = $this->connection->prepare(
             "SELECT * 
              FROM posts LEFT JOIN users

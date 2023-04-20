@@ -51,6 +51,11 @@ class CreateUserCommandTest extends TestCase
             {
                 throw new UserNotFoundException("Пользователя с таким логином:{$username} не существует.");
             }
+
+            public function delete($id): void
+            {
+
+            }
         };
     }
 
@@ -109,6 +114,11 @@ class CreateUserCommandTest extends TestCase
             public function wasCalled(): bool
             {
                 return $this->called;
+            }
+
+            public function delete($id): void
+            {
+
             }
         };
 
