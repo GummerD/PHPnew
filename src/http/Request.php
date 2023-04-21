@@ -83,7 +83,7 @@ class Request
 
         if (!array_key_exists('REQUEST_URI', $this->server)) {
             // Если мы не можем получить URI - бросаем исключение
-            throw new HttpException('Cannot get path from the request');
+            throw new HttpException('Не возможно определить URI путь');
         }
 
         // Используем встроенную в PHP функцию parse_url
@@ -91,7 +91,7 @@ class Request
 
         if (!is_array($components) || !array_key_exists('path', $components)) {
             // Если мы не можем получить путь - бросаем исключение
-            throw new HttpException('Cannot get path from the request');
+            throw new HttpException('Не возможно определить URI путь');
         }
         return $components['path'];
     }
@@ -109,14 +109,14 @@ class Request
         if (!array_key_exists($param, $this->get)) {
             // Если нет такого параметра в запросе - бросаем исключение
             throw new HttpException(
-                "No such query param in the request: $param"
+                "Такого параметра не существует: $param"
             );
         }
         $value = trim($this->get[$param]);
         if (empty($value)) {
             // Если значение параметра пусто - бросаем исключение
             throw new HttpException(
-                "Empty query param in the request: $param"
+                "В URI не указан парметр зпроса: $param"
             );
         }
         return $value;

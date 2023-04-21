@@ -52,7 +52,7 @@ class DIContainer implements ContainerInterface
             $parameterType = $parameter->getType()->getName();
             //var_dump($parameterType);
             $parameters[] =  $this->get($parameterType);
-            var_dump($parameters); 
+            //var_dump($parameters); 
         }
 
         return new $type(...$parameters);

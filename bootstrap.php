@@ -1,12 +1,15 @@
 <?
 
 use GummerD\PHPnew\Container\DIContainer;
+use GummerD\PHPnew\http\Actions\Likes\CreateLike;
 use GummerD\PHPnew\Repositories\UserRepo\SqliteUsersRepo;
 use GummerD\PHPnew\Repositories\PostsRepo\SqlitePostsRepo;
 use GummerD\PHPnew\Repositories\CommentsRepo\SqliteCommentsRepo;
 use GummerD\PHPnew\Interfaces\IRepositories\UsersRepositoryInterface;
 use GummerD\PHPnew\Interfaces\IRepositories\PostsRepositoriesInterface;
 use GummerD\PHPnew\Interfaces\IRepositories\CommentsRepositoriesInterface;
+use GummerD\PHPnew\Interfaces\IRepositories\LikesRepositoryInterface;
+use GummerD\PHPnew\Repositories\LikesRepo\SqliteLikesRepo;
 
 require_once (__DIR__ . '/vendor/autoload.php');
 
@@ -30,6 +33,11 @@ $container->bind(
 $container->bind(
     CommentsRepositoriesInterface::class,
     SqliteCommentsRepo::class
+);
+
+$container->bind(
+    LikesRepositoryInterface::class,
+    SqliteLikesRepo::class
 );
 
 return $container;
