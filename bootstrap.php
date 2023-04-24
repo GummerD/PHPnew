@@ -10,6 +10,9 @@ use GummerD\PHPnew\Interfaces\IRepositories\PostsRepositoriesInterface;
 use GummerD\PHPnew\Interfaces\IRepositories\CommentsRepositoriesInterface;
 use GummerD\PHPnew\Interfaces\IRepositories\LikesRepositoryInterface;
 use GummerD\PHPnew\Repositories\LikesRepo\SqliteLikesRepo;
+use Monolog\Handler\StreamHandler;
+use Monolog\Logger;
+use Psr\Log\LoggerInterface;
 
 require_once (__DIR__ . '/vendor/autoload.php');
 
@@ -38,6 +41,12 @@ $container->bind(
 $container->bind(
     LikesRepositoryInterface::class,
     SqliteLikesRepo::class
+);
+
+$container->bind(
+    LoggerInterface::class,
+    (new Logger('blog'))
+    ->pushHandler(new StreamHandler(__DIR__ . '/logs/blog.log'))
 );
 
 return $container;

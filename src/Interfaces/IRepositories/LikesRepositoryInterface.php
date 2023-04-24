@@ -21,4 +21,5 @@ interface LikesRepositoryInterface
     public function getLikesByPostId($id): Likes;
     public function CheckOwnerInTablelikes(Post $post_id, User $owner_id): bool;
     public function delete($like_id): void;
+    public function getAllLikesForPost($post_id):int;
 }

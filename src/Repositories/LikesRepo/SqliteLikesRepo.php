@@ -90,16 +90,19 @@ class SqliteLikesRepo implements LikesRepositoryInterface
         $statement = $this->connection->prepare(
             "SELECT * FROM likes 
                 LEFT JOIN posts
-                    ON likes.post_id = posts.post_id
+                    ON likes.id_for_post = posts.post_id
                 LEFT JOIN users
-                    ON likes.owner_id = users.user_id
-                WHERE post_id = :post_id
+                    ON likes.id_for_user = users.user_id
+                WHERE id_for_post = :post_id
             "
         );
 
         $statement->execute([
             ':post_id' => $id
         ]);
+
+        $countPost = $statement->fetchAll(PDO::FETCH_ASSOC);
+        //var_dump($countPost);
 
         return $this->getResult($statement, 'post_id', $id);
     }
@@ -177,5 +180,34 @@ class SqliteLikesRepo implements LikesRepositoryInterface
         ]);
 
         echo "Like удален.";
+    }
+
+    public function getAllLikesForPost($post_id): int
+    {   
+        $statement = $this->connection->prepare(
+            "SELECT * FROM likes 
+                LEFT JOIN posts
+                    ON likes.id_for_post = posts.post_id
+                LEFT JOIN users
+                    ON likes.id_for_user = users.user_id
+                WHERE id_for_post = :post_id
+            "
+        );
+
+        $statement->execute([
+            ':post_id' => $post_id
+        ]);
+
+        $countPost = $statement->fetchAll(PDO::FETCH_ASSOC);
+        //var_dump($countPost);
+
+        $posts = [];
+        foreach($countPost as $post => $value){
+            $posts[] = $value["id_for_post"];
+            //var_dump($posts);
+        }
+
+        $countPosts =  count($posts);
+        return $countPosts;
     }
 }
