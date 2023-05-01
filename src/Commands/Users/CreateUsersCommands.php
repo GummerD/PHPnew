@@ -2,6 +2,7 @@
 
 namespace GummerD\PHPnew\Commands\Users;
 
+use Psr\Log\LoggerInterface;
 use GummerD\PHPnew\Models\User;
 use GummerD\PHPnew\Models\UUID;
 use GummerD\PHPnew\Models\Person\Name;
@@ -23,6 +24,7 @@ class CreateUsersCommands
      */
     public function __construct(
         private UsersRepositoryInterface $userRepository,
+        private LoggerInterface $logger,
     ) {
     }
 
@@ -33,8 +35,11 @@ class CreateUsersCommands
      * @return void
      */
     public function handle(Arguments $argument): void
-    {
+    {   
+        $this->logger->info('Создание нового пользователя через командную строку');
+
         $username = $argument->get('username');
+
         if ($this->userExists($username)) {
             throw new CommandException("Пользователь с таким {$username} логиномы уже существует");
         }
@@ -49,6 +54,8 @@ class CreateUsersCommands
                 )
             )
         );
+
+        $this->logger->info("Создан новый пользователь под логином:{$username}");
     }
 
     /**

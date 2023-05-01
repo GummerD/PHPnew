@@ -33,7 +33,7 @@ class DIContainer implements ContainerInterface
             return $this->get($typeToCreate);
         }
 
-        //var_dump($type);
+        var_dump($type);
 
         if (!class_exists($type)) {
             throw new NotFoundException("Такого класса не было объявлено:{$type}");

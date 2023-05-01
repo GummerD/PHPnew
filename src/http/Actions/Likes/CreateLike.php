@@ -2,45 +2,42 @@
 
 namespace GummerD\PHPnew\http\Actions\Likes;
 
-use GummerD\PHPnew\http\Response\SuccessfulResponse;
 use GummerD\PHPnew\Models\UUID;
 use GummerD\PHPnew\http\Request;
 use GummerD\PHPnew\Models\Likes;
 use GummerD\PHPnew\http\Response\Response;
 use GummerD\PHPnew\http\Response\ErrorResponse;
 use GummerD\PHPnew\Exceptions\http\HttpException;
+use GummerD\PHPnew\http\Response\SuccessfulResponse;
 use GummerD\PHPnew\Exceptions\Likes\FounLikeException;
+use GummerD\PHPnew\http\Actions\Interfaces\ActionInterface;
 use GummerD\PHPnew\Exceptions\PostsExceptions\PostNotFoundException;
 use GummerD\PHPnew\Exceptions\UsersExceptions\UserNotFoundException;
-use GummerD\PHPnew\http\Actions\Interfaces\ActionInterface;
 use GummerD\PHPnew\Interfaces\IRepositories\LikesRepositoryInterface;
-use GummerD\PHPnew\Interfaces\IRepositories\PostsRepositoriesInterface;
 use GummerD\PHPnew\Interfaces\IRepositories\UsersRepositoryInterface;
+use GummerD\PHPnew\Interfaces\IRepositories\PostsRepositoriesInterface;
+use GummerD\PHPnew\http\Identification\JsonBodyIdentificationUserByUsername;
+use Psr\Log\LoggerInterface;
 
 class CreateLike implements ActionInterface
 {
     public function __construct(
         protected LikesRepositoryInterface $likesRepository,
-        protected UsersRepositoryInterface $usersRepository,
-        protected PostsRepositoriesInterface $postsRepository
+        private JsonBodyIdentificationUserByUsername $identification,
+        protected PostsRepositoriesInterface $postsRepository,
+        private LoggerInterface $logger
     ) {
     }
 
     public function handle(Request $request): Response
     {
         try {
-            $owner= $request->jsonBodyField('owner_id');
             $post= $request->jsonBodyField('post_id');
         } catch (HttpException $e) {
             return new ErrorResponse($e->getMessage());
         }
 
-        try {
-            $owner = $this->usersRepository->getByUserId($owner);
-        } catch (UserNotFoundException $e) {
-            return new ErrorResponse($e->getMessage());
-        }
-
+        $author = $this->identification->user($request);
 
         try {
             $post = $this->postsRepository->getPostById($post);
@@ -48,12 +45,12 @@ class CreateLike implements ActionInterface
             return new ErrorResponse($e->getMessage());
         }
 
-        $checkTableLikes = $this->likesRepository->CheckOwnerInTablelikes($post, $owner);
+        $checkTableLikes = $this->likesRepository->CheckOwnerInTablelikes($post, $author);
 
         try {
             if ($checkTableLikes === false) {
                 throw new FounLikeException("
-                    Пользователь с id: {$owner->getId()}, уже ставил лайк этой статье {$post->getId()}.
+                    Пользователь с id: {$author->getId()}, уже ставил лайк этой статье id: {$post->getId()}.
                 ");
             }
         } catch (FounLikeException $e) {
@@ -65,7 +62,7 @@ class CreateLike implements ActionInterface
             $like = new Likes(
                 UUID::random(),
                 $post,
-                $owner
+                $author
             );
         } catch (HttpException $e) {
             return new ErrorResponse($e->getMessage());
@@ -73,10 +70,15 @@ class CreateLike implements ActionInterface
 
         $this->likesRepository->save($like);
 
+        $this->logger->info(
+            "Пользователь {$author->getUsername()} 
+            поставил лайк статье с ID: {$post->getId()}"
+        );
+
         return new SuccessfulResponse([
             'create_like' => "Получена новая реакция ID: {$like->getLikeId()}",
             'post_id' => "На пост с ID: {$post->getId()}",
-            'user' => "От пользователя c логином {$owner->getUsername()}"
+            'user' => "От пользователя c логином {$author->getUsername()}"
         ]);
     }
 }

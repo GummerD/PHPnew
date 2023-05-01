@@ -10,11 +10,13 @@ use GummerD\PHPnew\Exceptions\http\HttpException;
 use GummerD\PHPnew\Exceptions\Likes\LikesNotFoundException;
 use GummerD\PHPnew\http\Actions\Interfaces\ActionInterface;
 use GummerD\PHPnew\Interfaces\IRepositories\LikesRepositoryInterface;
+use Psr\Log\LoggerInterface;
 
 class ActionFindLikeById implements ActionInterface
 {
     public function __construct(
-        protected LikesRepositoryInterface $likesRepository,
+        private LikesRepositoryInterface $likesRepository,
+        private LoggerInterface $logger 
     ) {
     }
     public function handle(Request $request): Response
@@ -31,9 +33,13 @@ class ActionFindLikeById implements ActionInterface
             return new ErrorResponse($e->getMessage());
         }
 
+        $this->logger->info(
+            "Инициализирован поиск реакции с ID: {$like_id}"
+        );
+
         return new SuccessfulResponse([
-                'like_id'=>"Найден дайк с ID:{$like->getLikeId()}",
-                'owner'=> "Лайк создaл пользователь с логином: {$like->getOwnerId()->getUsername()}"
+                'like_id'=>"Найдена реакция(лайк) с ID:{$like->getLikeId()}",
+                'owner'=> "Реакцию создaл пользователь с логином: {$like->getOwnerId()->getUsername()}"
         ]);
     }
 }

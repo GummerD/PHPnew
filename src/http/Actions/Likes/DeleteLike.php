@@ -9,11 +9,13 @@ use GummerD\PHPnew\http\Response\ErrorResponse;
 use GummerD\PHPnew\http\Response\Response;
 use GummerD\PHPnew\http\Response\SuccessfulResponse;
 use GummerD\PHPnew\Interfaces\IRepositories\LikesRepositoryInterface;
+use Psr\Log\LoggerInterface;
 
 class DeleteLike implements ActionInterface
 {
     public function __construct(
-        protected LikesRepositoryInterface $likesRepository
+        protected LikesRepositoryInterface $likesRepository,
+        private LoggerInterface $logger
     ){
     }
 
@@ -32,6 +34,11 @@ class DeleteLike implements ActionInterface
         }
         
         $this->likesRepository->delete($like_id);
+        
+        //ввел логер
+        $this->logger->info(
+            "Удален лайк c id: {$like_id}"
+        );
 
         return new SuccessfulResponse([
             'delete_like' => "Like с ID: {$like_id} успешно удален."

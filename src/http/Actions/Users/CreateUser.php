@@ -3,6 +3,7 @@
 namespace GummerD\PHPnew\http\Actions\Users;
 
 use Faker\Factory;
+use Psr\Log\LoggerInterface;
 use GummerD\PHPnew\Models\User;
 use GummerD\PHPnew\Models\UUID;
 use GummerD\PHPnew\http\Request;
@@ -11,15 +12,17 @@ use GummerD\PHPnew\http\Response\Response;
 use GummerD\PHPnew\http\Response\ErrorResponse;
 use GummerD\PHPnew\Exceptions\http\HttpException;
 use GummerD\PHPnew\http\Response\SuccessfulResponse;
-use GummerD\PHPnew\Exceptions\http\UserFoundException;
 use GummerD\PHPnew\http\Actions\Interfaces\ActionInterface;
 use GummerD\PHPnew\Exceptions\UUID\InvalidArgumentException;
 use GummerD\PHPnew\Interfaces\IRepositories\UsersRepositoryInterface;
+use GummerD\PHPnew\Exceptions\UsersExceptions\UserAlradyExistsException;
+
 
 class CreateUser implements ActionInterface
 {
     public function __construct(
-        private UsersRepositoryInterface $userRepository
+        private UsersRepositoryInterface $userRepository,
+        private LoggerInterface $logger
     ) {
     }
 
@@ -38,12 +41,24 @@ class CreateUser implements ActionInterface
                     $facker->lastName()
                 )
             );
-
-            $this->userRepository->save($user);
-        } catch (HttpException $e) {
+  
+        } catch (HttpException | InvalidArgumentException $e) {
             return new ErrorResponse($e->getMessage());
         }
 
+        // ввел новое исключение + логирование ошибки
+        try {
+            $this->userRepository->save($user); 
+        } catch (UserAlradyExistsException $e) {
+            $this->logger->warning("
+                Неудачная попытка создать пользователя 
+                с существующим логином:{$user->getUsername()}"
+            );
+            return new ErrorResponse($e->getMessage());
+        }
+        
+        // ввел логирование на нового пользователя
+        $this->logger->info("Создан пользователь с логином:{$user->getUsername()}");
 
         return new SuccessfulResponse(
             [

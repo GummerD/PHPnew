@@ -11,12 +11,14 @@ use GummerD\PHPnew\http\Actions\Interfaces\ActionInterface;
 use GummerD\PHPnew\http\Response\SuccessfulResponse;
 use GummerD\PHPnew\Interfaces\IRepositories\LikesRepositoryInterface;
 use GummerD\PHPnew\Interfaces\IRepositories\PostsRepositoriesInterface;
+use Psr\Log\LoggerInterface;
 
 class ActionFindAllPostsByLikeId implements ActionInterface
 {
     public function __construct(
         protected PostsRepositoriesInterface $postsRepositoriy,
-        protected LikesRepositoryInterface $likesRepository
+        protected LikesRepositoryInterface $likesRepository,
+        private LoggerInterface $logger
     ){
 
     }
@@ -40,6 +42,10 @@ class ActionFindAllPostsByLikeId implements ActionInterface
         } catch (LikesNotFoundException $e) {
             return new ErrorResponse($e->getMessage());
         }
+
+        $this->logger->info(
+            "Инициализирован поиск всех реакций(лайков) на статью с ID: {$post_id}"
+        );
 
         return new SuccessfulResponse([
             'number_likes' => "Статье ID: {$post->getId()} поставлено {$countLikes} лайков."

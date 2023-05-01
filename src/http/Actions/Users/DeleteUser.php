@@ -2,50 +2,40 @@
 
 namespace GummerD\PHPnew\http\Actions\Users;
 
+use Psr\Log\LoggerInterface;
 use GummerD\PHPnew\http\Request;
 use GummerD\PHPnew\http\Response\Response;
 use GummerD\PHPnew\http\Response\ErrorResponse;
-use GummerD\PHPnew\Exceptions\http\HttpException;
 use GummerD\PHPnew\http\Response\SuccessfulResponse;
 use GummerD\PHPnew\http\Actions\Interfaces\ActionInterface;
 use GummerD\PHPnew\Exceptions\UsersExceptions\UserNotFoundException;
+use GummerD\PHPnew\http\Identification\JsonBodyIdentificationUserByUsername;
 use GummerD\PHPnew\Interfaces\IRepositories\UsersRepositoryInterface;
 
 class DeleteUser implements ActionInterface
 {
-    // Нам понадобится репозиторий пользователей,
-    // внедряем его контракт в качестве зависимости
     public function __construct(
-        private UsersRepositoryInterface $usersRepository
+        private JsonBodyIdentificationUserByUsername $identification,
+        private UsersRepositoryInterface $usersRepository,
+        private LoggerInterface $logger
     ) {
     }
 
-    // Функция, описанная в контракте
     public function handle(Request $request): Response
     {
-        try {
-            // Пытаемся получить искомое имя пользователя из запроса
-            $user_id = $request->query('user_id');
-            $this->usersRepository->getByUserId($user_id);
-        } catch (HttpException | UserNotFoundException $e) {
-            // Если в запросе нет параметра username -
-            // возвращаем неуспешный ответ,
-            // сообщение об ошибке берём из описания исключения
-            return new ErrorResponse($e->getMessage());
-        }
+        // ввел идентификатор
+        $user = $this->identification->user($request);
 
         try {
-            // Пытаемся найти пользователя в репозитории
-            $this->usersRepository->delete($user_id);
+            $this->usersRepository->delete($user->getId());
         } catch (UserNotFoundException $e) {
-            // Если пользователь не найден -
-            // возвращаем неуспешный ответ
             return new ErrorResponse($e->getMessage());
         }
+        // ввел логирование на удаление пользователя
+        $this->logger->info("Пользователь c логиом: {$user->getUsername()} удален");
 
-        // Возвращаем успешный ответ
         return new SuccessfulResponse([
-            'user_delete' =>  "Пользователь с id: {$user_id} удален.", 
+            'user_delete' =>  "Пользователь с id: {$user->getId()} удален.", 
         ]);
     }
 }

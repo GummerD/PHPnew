@@ -10,4 +10,5 @@ interface UsersRepositoryInterface
     public function getByUserId($id): User;
     public function getByUsername($username): User;
     public function delete($id): void;
+    public function UserExists($username): bool;
 }

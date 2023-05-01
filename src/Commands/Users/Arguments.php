@@ -23,11 +23,11 @@ class Arguments
 
     }
 
-    public static function fromFrgv(array $argv): self
+    public static function fromArgv(array $argv): self
     {
-        print_r($argv);
-
+        //print_r($argv);
         $input = [];
+
         foreach ($argv as $argument) {
             //print_r($argument);
             $parts = explode('=', $argument);
@@ -38,7 +38,7 @@ class Arguments
             }
             $input[$parts[0]] = $parts[1];
         }
-        print_r($input);
+        //print_r($input);
 
         return new self($input);
     }

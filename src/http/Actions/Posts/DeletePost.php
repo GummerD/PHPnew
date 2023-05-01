@@ -10,12 +10,13 @@ use GummerD\PHPnew\http\Response\SuccessfulResponse;
 use GummerD\PHPnew\http\Actions\Interfaces\ActionInterface;
 use GummerD\PHPnew\Exceptions\PostsExceptions\PostNotFoundException;
 use GummerD\PHPnew\Interfaces\IRepositories\PostsRepositoriesInterface;
-use InvalidArgumentException;
+use Psr\Log\LoggerInterface;
 
 class DeletePost implements ActionInterface
 {
     public function __construct(
-        private PostsRepositoriesInterface $postsRepository
+        private PostsRepositoriesInterface $postsRepository,
+        private LoggerInterface $logger
     ) {
     }
 
@@ -33,6 +34,11 @@ class DeletePost implements ActionInterface
         } catch (PostNotFoundException $e) {
             return new ErrorResponse($e->getMessage());
         }
+
+        //ввод логера
+        $this->logger->info("
+            Была удалена статья с ID:{$post_id}
+        ");
 
         return new SuccessfulResponse([
             'post_delete' =>  "Пост с id: {$post_id} удален.", 

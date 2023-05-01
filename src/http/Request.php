@@ -61,11 +61,12 @@ class Request
     public function jsonBodyField(string $field): mixed
     {
         $data = $this->jsonBody();
+
         if (!array_key_exists($field, $data)) {
-            throw new HttpException("No such field: $field");
+            throw new HttpException("Не указано поле: $field");
         }
         if (empty($data[$field])) {
-            throw new HttpException("Empty field: $field");
+            throw new HttpException("Поле отсуствует: $field");
         }
         return $data[$field];
     }

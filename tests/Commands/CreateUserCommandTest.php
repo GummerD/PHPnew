@@ -12,7 +12,7 @@ use GummerD\PHPnew\Exceptions\CommadsExceptions\CommandException;
 use GummerD\PHPnew\Exceptions\UsersExceptions\UserNotFoundException;
 use GummerD\PHPnew\Interfaces\IRepositories\UsersRepositoryInterface;
 use GummerD\PHPnew\Repositories\UserRepo\ForTest\DummyUserRepository;
-
+use GummerD\PHPnew\UnitTests\Dummy\Logger\DummyLogger;
 
 /**
  * Summary of CreateUserCommandTest
@@ -21,7 +21,7 @@ class CreateUserCommandTest extends TestCase
 {
     public function testItThrowsAnExceptionWhenUserAlreadyExists(): void
     {
-        $command = new CreateUsersCommands(new DummyUserRepository());
+        $command = new CreateUsersCommands(new DummyUserRepository(),new DummyLogger());
 
         $this->expectException(CommandException::class);
 
@@ -70,7 +70,7 @@ class CreateUserCommandTest extends TestCase
             'first_name' => 'Ivan'
         ];
 
-        $command = new CreateUsersCommands($this->makeUserRepository());
+        $command = new CreateUsersCommands($this->makeUserRepository(), new DummyLogger());
 
         $this->expectException(ArgumentsExceptions::class);
 
@@ -123,7 +123,7 @@ class CreateUserCommandTest extends TestCase
         };
 
         // Передаём наш мок в команду
-        $command = new CreateUsersCommands($usersRepository);
+        $command = new CreateUsersCommands($usersRepository, new DummyLogger());
 
         // Запускаем команду
         $command->handle(new Arguments([

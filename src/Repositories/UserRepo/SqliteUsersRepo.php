@@ -1,6 +1,7 @@
 <?
 namespace GummerD\PHPnew\Repositories\UserRepo;
 
+use GummerD\PHPnew\Exceptions\UsersExceptions\UserAlradyExistsException;
 use GummerD\PHPnew\Interfaces\IRepositories\UsersRepositoryInterface;
 use PDO;
 use GummerD\PHPnew\Models\User;
@@ -32,6 +33,13 @@ class SqliteUsersRepo implements UsersRepositoryInterface
      */
     public function save(User $user): void
     {
+        $existUser = $this->UserExists($user->getUsername());
+
+        if($existUser === true)
+        {
+            throw new UserAlradyExistsException("Пользователь с логином {$user->getUsername()} уже сущесвует");
+        }
+
         $statement = $this->connection->prepare(
             "INSERT INTO users (user_id, username, first_name, last_name) VALUES (:user_id, :username, :first_name, :last_name)"
         );
@@ -44,8 +52,6 @@ class SqliteUsersRepo implements UsersRepositoryInterface
                 ':last_name' => $user->getName()->getLastname(),
             ]
         );
-
-        echo "Пользователь сохранен";
     }
 
     /**
@@ -117,7 +123,7 @@ class SqliteUsersRepo implements UsersRepositoryInterface
     public function delete($id): void
     {   
         $id = new UUID($id);
-        
+
         $statement = $this->connection->prepare(
             "DELETE FROM users WHERE user_id = :id" 
         );
@@ -126,4 +132,24 @@ class SqliteUsersRepo implements UsersRepositoryInterface
             ':id'=>(string)$id,
         ]);
     }
+
+    public function UserExists($username): bool
+    {
+        $statement = $this->connection->prepare(
+            "SELECT * FROM users WHERE username = :username"
+        );
+
+        $statement->execute([
+            ':username' => $username
+        ]);
+
+        $result = $statement->fetch(PDO::FETCH_ASSOC);
+
+        if($result === false){
+            return false;
+        }
+
+        return true;
+    }
+
 }

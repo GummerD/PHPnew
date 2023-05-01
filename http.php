@@ -21,6 +21,7 @@ use GummerD\PHPnew\http\Actions\Users\ActionFindByUsername;
 use GummerD\PHPnew\http\Actions\Comments\ActionFindCommentById;
 use GummerD\PHPnew\Repositories\CommentsRepo\SqliteCommentsRepo;
 use GummerD\PHPnew\http\Actions\Likes\ActionFindAllPostsByLikeId;
+use Psr\Log\LoggerInterface;
 
 $container = require(__DIR__ . '/bootstrap.php');
 
@@ -30,9 +31,12 @@ $request = new Request(
     file_get_contents('php://input')
 );
 
+$logger = $container->get(LoggerInterface::class);
+
 try {
     $path = $request->path();
 } catch (HttpException) {
+    $logger->warning($e->getMessage());
     (new ErrorResponse)->send();
     return;
 }
@@ -40,6 +44,7 @@ try {
 try {
     $method = $request->method();
 } catch (HttpException) {
+    $logger->warning($e->getMessage());
     (new ErrorResponse)->send();
     return;
 }
@@ -68,15 +73,14 @@ $routes = [
 
 ];
 
-if (!array_key_exists($method, $routes)) {
-    (new ErrorResponse('Не указан верный метод для HTTP (GET, POST, DELETE и т.д.)'))->send();
+if (!array_key_exists($method, $routes) || !array_key_exists($path, $routes[$method])) {
+    $message = 'Не указан верный action или метод для HTTP (GET, POST, DELETE и т.д.)';
+    $logger->warning($message);
+    (new ErrorResponse($message))->send();
     return;
 }
 
-if (!array_key_exists($path, $routes[$method])) {
-    (new ErrorResponse('Не указан верный метод для HTTP (GET, POST, DELETE и т.д.)'))->send();
-    return;
-}
+
 
 $actionClassName = $routes[$method][$path];
 
@@ -86,6 +90,7 @@ try {
     $response = $action->handle($request);
     $response->send();
 } catch (AppException $e) {
+    $logger->warning($e->getMessage(), ['exception' => $e]);
     (new ErrorResponse($e->getMessage()))->send();
 }
 

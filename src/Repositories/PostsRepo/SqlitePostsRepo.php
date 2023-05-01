@@ -8,9 +8,9 @@ use GummerD\PHPnew\Models\Post;
 use GummerD\PHPnew\Models\User;
 use GummerD\PHPnew\Models\UUID;
 use GummerD\PHPnew\Models\Person\Name;
+use GummerD\PHPnew\Exceptions\UUID\InvalidArgumentException;
 use GummerD\PHPnew\Exceptions\PostsExceptions\PostNotFoundException;
 use GummerD\PHPnew\Interfaces\IRepositories\PostsRepositoriesInterface;
-use InvalidArgumentException;
 
 /**
  * Summary of SqlitePostsRepo
@@ -166,4 +166,5 @@ class SqlitePostsRepo implements PostsRepositoriesInterface
             ':id'=>(string)$id,
         ]);
     }
+
 }

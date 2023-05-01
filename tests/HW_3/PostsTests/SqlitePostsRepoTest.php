@@ -86,6 +86,12 @@ class SqlitePostsRepoTest extends TestCase
                 }
             }
 
+
+            public function delete($id): void
+            {
+                $this->called = true;
+            }
+
             public function returnCalled(): bool
             {
                 return $this->called;

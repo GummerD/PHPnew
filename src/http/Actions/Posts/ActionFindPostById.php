@@ -10,13 +10,15 @@ use GummerD\PHPnew\http\Response\SuccessfulResponse;
 use GummerD\PHPnew\http\Actions\Interfaces\ActionInterface;
 use GummerD\PHPnew\Exceptions\PostsExceptions\PostNotFoundException;
 use GummerD\PHPnew\Interfaces\IRepositories\PostsRepositoriesInterface;
+use Psr\Log\LoggerInterface;
 
 class ActionFindPostById implements ActionInterface
 {
     // Нам понадобится репозиторий пользователей,
     // внедряем его контракт в качестве зависимости
     public function __construct(
-        private PostsRepositoriesInterface $postsRepository
+        private PostsRepositoriesInterface $postsRepository,
+        private LoggerInterface $logger
     ) {
     }
 
@@ -42,7 +44,9 @@ class ActionFindPostById implements ActionInterface
             return new ErrorResponse($e->getMessage());
         }
 
-        
+        $this->logger->info(
+            "Инициализирован поиск статьи с id {$post_id}"
+        );
     
         // Возвращаем успешный ответ
         return new SuccessfulResponse([
