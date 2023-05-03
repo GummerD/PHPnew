@@ -1,7 +1,6 @@
 <?
 use GummerD\PHPnew\http\Request;
 
-use GummerD\PHPnew\Container\DIContainer;
 use GummerD\PHPnew\Exceptions\App\AppException;
 use GummerD\PHPnew\http\Response\ErrorResponse;
 use GummerD\PHPnew\Exceptions\http\HttpException;
@@ -15,11 +14,8 @@ use GummerD\PHPnew\http\Actions\Comments\CreateComment;
 use GummerD\PHPnew\http\Actions\Comments\DeleteComment;
 use GummerD\PHPnew\http\Actions\Likes\ActionFindLikeById;
 use GummerD\PHPnew\http\Actions\Posts\ActionFindPostById;
-use GummerD\PHPnew\Repositories\UserRepo\SqliteUsersRepo;
-use GummerD\PHPnew\Repositories\PostsRepo\SqlitePostsRepo;
 use GummerD\PHPnew\http\Actions\Users\ActionFindByUsername;
 use GummerD\PHPnew\http\Actions\Comments\ActionFindCommentById;
-use GummerD\PHPnew\Repositories\CommentsRepo\SqliteCommentsRepo;
 use GummerD\PHPnew\http\Actions\Likes\ActionFindAllPostsByLikeId;
 use Psr\Log\LoggerInterface;
 

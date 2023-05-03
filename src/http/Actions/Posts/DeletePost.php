@@ -35,7 +35,6 @@ class DeletePost implements ActionInterface
             return new ErrorResponse($e->getMessage());
         }
 
-        //ввод логера
         $this->logger->info("
             Была удалена статья с ID:{$post_id}
         ");

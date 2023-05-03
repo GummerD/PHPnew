@@ -1,16 +1,17 @@
 <?
 namespace GummerD\PHPnew\http\Actions\Likes;
 
+use Psr\Log\LoggerInterface;
 use GummerD\PHPnew\http\Request;
-use GummerD\PHPnew\http\Response\SuccessfulResponse;
 use GummerD\PHPnew\Models\Likes;
 use GummerD\PHPnew\http\Response\Response;
 use GummerD\PHPnew\http\Response\ErrorResponse;
 use GummerD\PHPnew\Exceptions\http\HttpException;
+use GummerD\PHPnew\http\Response\SuccessfulResponse;
 use GummerD\PHPnew\Exceptions\Likes\LikesNotFoundException;
 use GummerD\PHPnew\http\Actions\Interfaces\ActionInterface;
+use GummerD\PHPnew\Exceptions\UUID\InvalidArgumentException;
 use GummerD\PHPnew\Interfaces\IRepositories\LikesRepositoryInterface;
-use Psr\Log\LoggerInterface;
 
 class ActionFindLikeById implements ActionInterface
 {
@@ -29,7 +30,7 @@ class ActionFindLikeById implements ActionInterface
 
         try {
             $like = $this->likesRepository->getLikesById($like_id);
-        } catch (LikesNotFoundException $e) {
+        } catch (LikesNotFoundException | InvalidArgumentException $e) {
             return new ErrorResponse($e->getMessage());
         }
 

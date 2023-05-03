@@ -10,6 +10,7 @@ use GummerD\PHPnew\Models\Person\Name;
 use GummerD\PHPnew\Exceptions\UsersExceptions\UserNotFoundException;
 use InvalidArgumentException;
 use PDOStatement;
+use Psr\Log\LoggerInterface;
 
 /**
  * Summary of SqliteUsersRepo
@@ -22,7 +23,9 @@ class SqliteUsersRepo implements UsersRepositoryInterface
      * @param PDO $connection
      */
     public function __construct(
-        private PDO $connection
+        private PDO $connection,
+        private LoggerInterface $logger
+    
     ){
     } 
 
@@ -36,7 +39,9 @@ class SqliteUsersRepo implements UsersRepositoryInterface
         $existUser = $this->UserExists($user->getUsername());
 
         if($existUser === true)
-        {
+        {   
+            $this->logger->warning("Предпринята попытка создать пользователя с уже имеющемся в БД логином: {$user->getUsername()} через SqliteUserssRepo");
+
             throw new UserAlradyExistsException("Пользователь с логином {$user->getUsername()} уже сущесвует");
         }
 
@@ -52,6 +57,9 @@ class SqliteUsersRepo implements UsersRepositoryInterface
                 ':last_name' => $user->getName()->getLastname(),
             ]
         );
+
+        $this->logger->info("Через SqliteUsersRepo создан новый пользователь с логином: {$user->getUsername()}.");
+
     }
 
     /**
@@ -64,6 +72,9 @@ class SqliteUsersRepo implements UsersRepositoryInterface
     {   
         try {
             $user_id = new UUID($user_id);
+
+            $this->logger->info("Через SqliteUsersRepo инициализирован запрос о пользователе с id: {$user_id}.");
+
         } catch (InvalidArgumentException $e) {
             $e->getMessage();
         }
@@ -87,7 +98,9 @@ class SqliteUsersRepo implements UsersRepositoryInterface
      * @return User
      */
     public function getByUsername($username): User
-    {
+    {   
+        $this->logger->info("Через SqliteUsersRepo инициализирован запрос о пользователе с логином: {$username}.");
+
         $statement = $this->connection->prepare(
             "SELECT * FROM users WHERE username = :username"
         );
@@ -105,10 +118,15 @@ class SqliteUsersRepo implements UsersRepositoryInterface
         $result = $statement->fetch(PDO::FETCH_ASSOC);
 
         if($result === false){
+            $this->logger->warning("Попытка получения информации через SqliteUserssRepo о пользователе с {$name}: {$variable} оказалась не удачной.");
             throw new UserNotFoundException(
                 "Пользователя с таким {$name}: {$variable} не существует. "
             );
         }
+
+        $this->logger->info(
+            "Пользователь с id {$result['user_id']} найден и передан в свой action."
+        );
 
         return new User(
             new UUID($result['user_id']),
@@ -117,13 +135,21 @@ class SqliteUsersRepo implements UsersRepositoryInterface
                 $result['first_name'],
                 $result['last_name']
             )
-        ); 
+        );
+        
     }
 
     public function delete($id): void
     {   
-        $id = new UUID($id);
+        $this->logger->info("Инициализирован запрос на удаление пользователя с id: {$id} через SqliteUserssRepo");
 
+        try {
+            $id = new UUID($id);
+        } catch (InvalidArgumentException $e) {
+            $this->logger->warning("Направленный запрос в SqliteUsersRepo на удаление пользователь с id: {$id} указан неверно.");
+            $e->getMessage();
+        }
+        
         $statement = $this->connection->prepare(
             "DELETE FROM users WHERE user_id = :id" 
         );
@@ -131,6 +157,7 @@ class SqliteUsersRepo implements UsersRepositoryInterface
         $statement->execute([
             ':id'=>(string)$id,
         ]);
+
     }
 
     public function UserExists($username): bool

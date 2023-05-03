@@ -2,6 +2,7 @@
 namespace GummerD\PHPnew\Models;
 
 use GummerD\PHPnew\Exceptions\UUID\InvalidArgumentException;
+use Psr\Log\LoggerInterface;
 
 class UUID
 {

@@ -13,6 +13,7 @@ use GummerD\PHPnew\Models\Person\Name;
 use GummerD\PHPnew\Exceptions\UUID\InvalidArgumentException;
 use GummerD\PHPnew\Exceptions\CommentsExceptions\CommentNotFoundException;
 use GummerD\PHPnew\Interfaces\IRepositories\CommentsRepositoriesInterface;
+use Psr\Log\LoggerInterface;
 
 class SqliteCommentsRepo implements CommentsRepositoriesInterface
 {
@@ -22,7 +23,8 @@ class SqliteCommentsRepo implements CommentsRepositoriesInterface
      * @param PDO $connection
      */
     public function __construct(
-        private PDO $connection
+        private PDO $connection,
+        private LoggerInterface $logger
     ) {
     }
 
@@ -33,7 +35,7 @@ class SqliteCommentsRepo implements CommentsRepositoriesInterface
      */
     public function save(Comment $comment): void
     {
-        //print_r($comment);
+        $this->logger->info("Иницилизировано создание нового комментария с id: {$comment->getId()} к посту {$comment->getPostId()->getId()} через SqliteCommentsRepo");
 
         $statement = $this->connection->prepare(
             "INSERT INTO comments (comment_id, owner_id, post_id, text) 
@@ -48,14 +50,15 @@ class SqliteCommentsRepo implements CommentsRepositoriesInterface
             ':text' => $comment->getText()
         ]);
 
-        echo "Комментарий сохранен. <br>";
     }
     /**
      * Summary of getAll
      * @return Comment
      */
     public function getAllComments(): void
-    {
+    {   
+        $this->logger->info("Иницилизирован поиск всех комментариев в БД через SqliteCommentsRepo");
+
         $statement = $this->connection->prepare(
             "SELECT * FROM comments
                 LEFT JOIN users
@@ -102,7 +105,9 @@ class SqliteCommentsRepo implements CommentsRepositoriesInterface
     {   
         try {
             $id = new UUID($id);
+            $this->logger->info("Иницилизирован поиск комментария с id {$id} через SqliteCommentsRepo");
         } catch (InvalidArgumentException $e) {
+            $this->logger->warning("Поиск комментария с id {$id} через SqliteCommentsRepo потерпел недачу");
             $e->getMessage();
         }
 
@@ -129,7 +134,16 @@ class SqliteCommentsRepo implements CommentsRepositoriesInterface
      * @return Comment
      */
     public function getCommentByOwner_id($owner_id): Comment
-    {
+    {   
+        try {
+            $owner_id = new UUID($owner_id);
+            $this->logger->info("Иницилизирован поиск комментария по id ползователя {$owner_id} через SqliteCommentsRepo");
+        } catch (InvalidArgumentException $e) {
+            $this->logger->warning("Поиск комментария о id ползователя {$owner_id} через SqliteCommentsRepo потерпел недачу");
+            $e->getMessage();
+        }
+
+
         $statement = $this->connection->prepare(
             "SELECT * FROM comments
                 LEFT JOIN users
@@ -141,7 +155,7 @@ class SqliteCommentsRepo implements CommentsRepositoriesInterface
         );
 
         $statement->execute([
-            ':owner_id' => $owner_id
+            ':owner_id' => (string)$owner_id
         ]);
 
         return $this->getResult($statement, 'пользователем', $owner_id);
@@ -152,6 +166,7 @@ class SqliteCommentsRepo implements CommentsRepositoriesInterface
         $result = $statement->fetch(PDO::FETCH_ASSOC);
 
         if ($result === false) {
+            $this->logger->warning("Поиск комментария с таким {$name}:{$variable} через SqliteCommentsRepo потерпел недачу");
             throw new CommentNotFoundException(
                 "Комментария с таким {$name}:{$variable} нет в БД"
             );
@@ -170,6 +185,8 @@ class SqliteCommentsRepo implements CommentsRepositoriesInterface
             $result['text']
         );
 
+        $this->logger->warning("Результат поиска для {$name} с :{$variable}  направлен в action.");
+
         return new Comment(
             new UUID($result['comment_id']),
             $user,
@@ -180,7 +197,14 @@ class SqliteCommentsRepo implements CommentsRepositoriesInterface
 
     public function delete($id): void
     {   
-        $id = new UUID($id);
+        
+        try {
+            $id = new UUID($id);
+            $this->logger->info("Иницилизировано удаление комменатрия с id:{$id} через SqliteCommentsRepo");
+        } catch (InvalidArgumentException $e) {
+            $this->logger->warning("Удаление комменатрия с id:{$id} через SqliteCommentsRepo потерпело недачу");
+            $e->getMessage();
+        }
         
         $statement = $this->connection->prepare(
             "DELETE FROM comments WHERE comment_id = :id" 

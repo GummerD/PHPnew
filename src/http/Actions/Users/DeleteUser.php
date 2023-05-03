@@ -31,8 +31,10 @@ class DeleteUser implements ActionInterface
         } catch (UserNotFoundException $e) {
             return new ErrorResponse($e->getMessage());
         }
-        // ввел логирование на удаление пользователя
-        $this->logger->info("Пользователь c логиом: {$user->getUsername()} удален");
+
+        $this->logger->info(
+            "Пользователь с id: {$user->getId()} удален."
+        );
 
         return new SuccessfulResponse([
             'user_delete' =>  "Пользователь с id: {$user->getId()} удален.", 

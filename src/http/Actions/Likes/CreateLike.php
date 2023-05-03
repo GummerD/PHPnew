@@ -57,7 +57,6 @@ class CreateLike implements ActionInterface
             return new ErrorResponse($e->getMessage());
         }
 
-
         try {
             $like = new Likes(
                 UUID::random(),

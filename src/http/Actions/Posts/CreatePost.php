@@ -18,11 +18,9 @@ use GummerD\PHPnew\Interfaces\IRepositories\PostsRepositoriesInterface;
 class CreatePost implements ActionInterface
 {
 
-    // Внедряем репозитории статей и пользователей
     public function __construct(
         private PostsRepositoriesInterface $postsRepository,
         private JsonBodyIdentificationUserByUsername $identification,
-        private LoggerInterface $logger
     ) {
     }
 
@@ -43,18 +41,10 @@ class CreatePost implements ActionInterface
                 $facker->text(30)
             );
         } catch (HttpException $e) {
-            // ввел логгер
-            $this->logger->warning("Ошибка при создании новой статьи {$e->getMessage()}");
             return new ErrorResponse($e->getMessage());
         }
 
         $this->postsRepository->save($post);
-
-        // ввел логгер
-        $this->logger->info(
-            "Создана новая статья {$post->getTitle()}, 
-            автор статьи пользователь под логином {$author->getUsername()} "
-        );
 
         return new SuccessfulResponse([
             'save_new_post' => "Новый пост, id: {$newPostId} сохранен.",

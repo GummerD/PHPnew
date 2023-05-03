@@ -15,7 +15,7 @@ use GummerD\PHPnew\Interfaces\IRepositories\UsersRepositoryInterface;
 use GummerD\PHPnew\http\Identification\JsonBodyIdentificationUserById;
 use GummerD\PHPnew\Interfaces\IRepositories\PostsRepositoriesInterface;
 use GummerD\PHPnew\Interfaces\IRepositories\CommentsRepositoriesInterface;
-use GummerD\PHPnew\http\Identification\JsonBodyIdentificationUserByUsername;
+
 
 require_once(__DIR__ . '/vendor/autoload.php');
 
@@ -51,16 +51,16 @@ $container->bind(
 $logger = new Logger('blog');
 
 if ($_SERVER['LOG_TO_FILES'] === 'yes') {
-    $logger->pushHandler(new StreamHandler(__DIR__ . '/logs/blog.log'))
-        ->pushHandler(new StreamHandler(
-            __DIR__ . '/logs/blog.warning.log',
-            level: Logger::WARNING,
-            bubble: true
-        ))
+    $logger->pushHandler(new StreamHandler(__DIR__ . '/logs/blog.log')) 
         ->pushHandler(new StreamHandler(
             __DIR__ . '/logs/blog.info.log',
             level: Logger::INFO,
-            bubble: true
+            bubble: false
+        ))
+        ->pushHandler(new StreamHandler(
+            __DIR__ . '/logs/blog.warning.log',
+            level: Logger::WARNING,
+            bubble: false
         ));
 }
 

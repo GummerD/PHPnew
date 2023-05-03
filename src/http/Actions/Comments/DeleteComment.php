@@ -11,11 +11,13 @@ use GummerD\PHPnew\http\Actions\Interfaces\ActionInterface;
 use GummerD\PHPnew\Exceptions\UsersExceptions\UserNotFoundException;
 use GummerD\PHPnew\Exceptions\CommentsExceptions\CommentNotFoundException;
 use GummerD\PHPnew\Interfaces\IRepositories\CommentsRepositoriesInterface;
+use Psr\Log\LoggerInterface;
 
 class DeleteComment implements ActionInterface
 {
     public function __construct(
-        private CommentsRepositoriesInterface $commentsRepository
+        private CommentsRepositoriesInterface $commentsRepository,
+        private LoggerInterface $logger
     ) {
     }
 
@@ -33,6 +35,8 @@ class DeleteComment implements ActionInterface
         } catch (CommentNotFoundException $e) {
             return new ErrorResponse($e->getMessage());
         }
+
+        $this->logger->info("Комментарий с id:{$comment_id} удаленю");
 
         return new SuccessfulResponse([
             'user_delete' =>  "Комментарий с id: {$comment_id} удален.", 

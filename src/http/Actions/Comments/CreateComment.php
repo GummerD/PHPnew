@@ -17,6 +17,7 @@ use GummerD\PHPnew\http\Identification\JsonBodyIdentificationUserByUsername;
 use GummerD\PHPnew\Interfaces\IRepositories\CommentsRepositoriesInterface;
 use GummerD\PHPnew\Interfaces\IRepositories\PostsRepositoriesInterface;
 use GummerD\PHPnew\Models\Comment;
+use Psr\Log\LoggerInterface;
 
 class CreateComment implements ActionInterface
 {
@@ -25,7 +26,8 @@ class CreateComment implements ActionInterface
     public function __construct(
         private PostsRepositoriesInterface $postsRepository,
         private CommentsRepositoriesInterface $commentsRepository,
-        private JsonBodyIdentificationUserByUsername $identification
+        private JsonBodyIdentificationUserByUsername $identification,
+        private LoggerInterface $logger
     ) {
     }
 
@@ -50,8 +52,6 @@ class CreateComment implements ActionInterface
         $newCommentId = UUID::random();
 
         try {
-            // Пытаемся создать объект комментария
-            // из данных запроса
             $comment = new Comment(
                 $newCommentId,
                 $author,
@@ -62,11 +62,10 @@ class CreateComment implements ActionInterface
             return new ErrorResponse($e->getMessage());
         }
 
-        // Сохраняем новуый комментарий в репозитории
         $this->commentsRepository->save($comment);
 
-        // Возвращаем успешный ответ,
-        // содержащий UUID нового комменатрия и данные автора
+        $this->logger->info("Пользователем под логином {$author->getUsername()} создан новый комментарий с id: {$comment->getId()}, к статье с id: {$comment->getPostId()->getId()} через SqliteCommentsRepo");
+
         return new SuccessfulResponse([
             'save_new_comment' => "Новый комментарий, id: {$newCommentId} сохранен.",
             'owner' => "Создатель: {$author->getUsername()}."

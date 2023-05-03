@@ -11,6 +11,7 @@ use GummerD\PHPnew\Models\Person\Name;
 use GummerD\PHPnew\Exceptions\UUID\InvalidArgumentException;
 use GummerD\PHPnew\Exceptions\PostsExceptions\PostNotFoundException;
 use GummerD\PHPnew\Interfaces\IRepositories\PostsRepositoriesInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * Summary of SqlitePostsRepo
@@ -22,7 +23,8 @@ class SqlitePostsRepo implements PostsRepositoriesInterface
      * @param PDO $connection
      */
     public function __construct(
-        private PDO $connection
+        private PDO $connection,
+        private LoggerInterface $logger
     ) {
     }
 
@@ -47,7 +49,7 @@ class SqlitePostsRepo implements PostsRepositoriesInterface
             ':text' => $post->getText()
         ]);
 
-        echo "Пост сохранен";
+        $this->logger->info("Через SqlitePostsRepo создана новая статья: {$post->getTitle()}.");
     }
 
     /**
@@ -56,6 +58,8 @@ class SqlitePostsRepo implements PostsRepositoriesInterface
      */
     public function getAllPosts(): void
     {
+        $this->logger->info("Иннициализирован Запрос на получение информации о всех статьях в БД через SqlitePostsRepo");
+        
         $statement = $this->connection->prepare(
             "SELECT * 
              FROM posts LEFT JOIN users
@@ -91,7 +95,9 @@ class SqlitePostsRepo implements PostsRepositoriesInterface
     {   
         try {
             $post_id = new UUID($post_id);
+            $this->logger->info("Иницилизирован поиск статье с id: {$post_id} через SqlitePostsRepo");
         } catch (InvalidArgumentException $e) {
+            $this->logger->warning("Направленный в SqlitePostsRepoId id: {$post_id} указан неверно.");
             $e->getMessage();
         }
         
@@ -117,6 +123,8 @@ class SqlitePostsRepo implements PostsRepositoriesInterface
      */
     public function getPostByTitle($title): Post
     {
+        $this->logger->info("Иницилизирован поиск статьи с заголовком: {$title} через SqlitePostsRepo");
+
         $statement = $this->connection->prepare(
             "SELECT * 
              FROM posts LEFT JOIN users
@@ -136,6 +144,9 @@ class SqlitePostsRepo implements PostsRepositoriesInterface
         $result = $statement->fetch(PDO::FETCH_ASSOC);
         //print_r($result);
         if ($result === false) {
+
+            $this->logger->warning("Запрос через SqlitePostsRepo для статьи с {$name}:{$variable} не выполнен.");
+
             throw new PostNotFoundException(
                 "Поста с таким {$name}:{$variable} не существует."
             );
@@ -147,6 +158,10 @@ class SqlitePostsRepo implements PostsRepositoriesInterface
             new Name($result['first_name'], $result['last_name'])
         );
 
+        $this->logger->info(
+            "Cтатья с id {$result['post_id']} найдена и передана в свой action."
+        );
+
         return new Post(
             new UUID($result['post_id']),
             $user,
@@ -154,16 +169,23 @@ class SqlitePostsRepo implements PostsRepositoriesInterface
             $result['text']
         );
     }
-    public function delete($id): void
+    public function delete($post_id): void
     {   
-        $id = new UUID($id);
+        $this->logger->info("Инициализирован запрос на удаление статьи с id: {$post_id} через SqlitePostsRepo");
+
+        try {
+            $post_id = new UUID($post_id);
+        } catch (InvalidArgumentException $e) {
+            $this->logger->warning("Направленный в SqlitePostsRepo на удаление пользователь с id: {$post_id} указан неверно.");
+            $e->getMessage();
+        }
         
         $statement = $this->connection->prepare(
             "DELETE FROM posts WHERE post_id = :id" 
         );
 
         $statement->execute([
-            ':id'=>(string)$id,
+            ':id'=>(string)$post_id ,
         ]);
     }
 
