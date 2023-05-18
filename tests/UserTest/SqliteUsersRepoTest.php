@@ -5,13 +5,12 @@ namespace GummerD\PHPnew\UnitTests\UserTest\CommentsTest;
 use GummerD\PHPnew\Models\User;
 use GummerD\PHPnew\Models\UUID;
 use PHPUnit\Framework\TestCase;
-use GummerD\PHPnew\Models\Comment;
 use GummerD\PHPnew\Models\Person\Name;
 use GummerD\PHPnew\Exceptions\UsersExceptions\UserNotFoundException;
 use GummerD\PHPnew\Interfaces\IRepositories\UsersRepositoryInterface;
 
 /**
- * Summary of SqliteCommentsRepoTest
+ * Summary of SqliteCommentsRepoTests
  */
 class SqliteUsersRepoTest extends TestCase
 {
@@ -42,6 +41,7 @@ class SqliteUsersRepoTest extends TestCase
                     return new User(
                         UUID::random(),
                         'some_username',
+                        'some_passwoed',
                         new Name('first_name', 'last_name')
                     );
                 } else {
@@ -61,6 +61,7 @@ class SqliteUsersRepoTest extends TestCase
                     return new User(
                         UUID::random(),
                         'some_username',
+                        'some_passwoed',
                         new Name('first_name', 'last_name')
                     );
         
@@ -90,6 +91,7 @@ class SqliteUsersRepoTest extends TestCase
         $user = new User(
             UUID::random(),
             'some_username',
+            'some_passwoed',
             new Name('first_name', 'last_name')
         );
 

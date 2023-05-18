@@ -19,6 +19,7 @@ class User
     public function __construct(
         protected ?UUID $id = null, 
         protected ?string $username = null,
+        protected ?string $password = null,
         protected ?Name $name = null
         )
     {}
@@ -31,6 +32,27 @@ class User
             имя: {$this->name->getFirstname()}, 
             фамилия: {$this->name->getLastname()}.
         ";
+    }
+
+
+    /**
+     * Summary of getPassword
+     * @return string
+     */
+    public function getPassword(): string
+    {
+        return $this->password;
+    }
+
+    /**
+     * Summary of getPassword
+     * @return User
+     */
+    public function setPassword($password): self
+    {
+         $this->password=$password;
+
+         return $this;
     }
 
     /**

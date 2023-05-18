@@ -28,12 +28,18 @@ class CreateUser implements ActionInterface
     {
         $facker = Factory::create('ru_Ru');
 
+        
+
         try {
             $user_id = UUID::random();
+            
+            $password = $request->jsonBodyField('password');
 
+            $hash = hash('sha256', $user_id . $password);
             $user = new User(
                 $user_id,
                 $request->jsonBodyField('username'),
+                $hash,
                 new Name(
                     $facker->firstName(),
                     $facker->lastName()

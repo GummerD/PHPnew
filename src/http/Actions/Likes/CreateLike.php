@@ -2,6 +2,7 @@
 
 namespace GummerD\PHPnew\http\Actions\Likes;
 
+use Psr\Log\LoggerInterface;
 use GummerD\PHPnew\Models\UUID;
 use GummerD\PHPnew\http\Request;
 use GummerD\PHPnew\Models\Likes;
@@ -16,14 +17,14 @@ use GummerD\PHPnew\Exceptions\UsersExceptions\UserNotFoundException;
 use GummerD\PHPnew\Interfaces\IRepositories\LikesRepositoryInterface;
 use GummerD\PHPnew\Interfaces\IRepositories\UsersRepositoryInterface;
 use GummerD\PHPnew\Interfaces\IRepositories\PostsRepositoriesInterface;
+use GummerD\PHPnew\Interfaces\Authentication\TokenAuthenticationInterface;
 use GummerD\PHPnew\http\Identification\JsonBodyIdentificationUserByUsername;
-use Psr\Log\LoggerInterface;
 
 class CreateLike implements ActionInterface
 {
     public function __construct(
         protected LikesRepositoryInterface $likesRepository,
-        private JsonBodyIdentificationUserByUsername $identification,
+        private TokenAuthenticationInterface $identification,
         protected PostsRepositoriesInterface $postsRepository,
         private LoggerInterface $logger
     ) {

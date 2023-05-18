@@ -3,21 +3,22 @@
 namespace GummerD\PHPnew\http\Actions\Comments;
 
 use Faker\Factory;
+use Psr\Log\LoggerInterface;
 use GummerD\PHPnew\Models\UUID;
 use GummerD\PHPnew\http\Request;
+use GummerD\PHPnew\Models\Comment;
 use GummerD\PHPnew\http\Response\Response;
 use GummerD\PHPnew\http\Response\ErrorResponse;
 use GummerD\PHPnew\Exceptions\http\HttpException;
-use GummerD\PHPnew\Exceptions\PostsExceptions\PostNotFoundException;
 use GummerD\PHPnew\http\Response\SuccessfulResponse;
 use GummerD\PHPnew\http\Actions\Interfaces\ActionInterface;
 use GummerD\PHPnew\Exceptions\UUID\InvalidArgumentException;
+use GummerD\PHPnew\Exceptions\PostsExceptions\PostNotFoundException;
 use GummerD\PHPnew\Exceptions\UsersExceptions\UserNotFoundException;
-use GummerD\PHPnew\http\Identification\JsonBodyIdentificationUserByUsername;
-use GummerD\PHPnew\Interfaces\IRepositories\CommentsRepositoriesInterface;
 use GummerD\PHPnew\Interfaces\IRepositories\PostsRepositoriesInterface;
-use GummerD\PHPnew\Models\Comment;
-use Psr\Log\LoggerInterface;
+use GummerD\PHPnew\Interfaces\Authentication\TokenAuthenticationInterface;
+use GummerD\PHPnew\Interfaces\IRepositories\CommentsRepositoriesInterface;
+
 
 class CreateComment implements ActionInterface
 {
@@ -26,7 +27,7 @@ class CreateComment implements ActionInterface
     public function __construct(
         private PostsRepositoriesInterface $postsRepository,
         private CommentsRepositoriesInterface $commentsRepository,
-        private JsonBodyIdentificationUserByUsername $identification,
+        private TokenAuthenticationInterface $identification,
         private LoggerInterface $logger
     ) {
     }

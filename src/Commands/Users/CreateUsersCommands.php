@@ -40,6 +40,9 @@ class CreateUsersCommands
 
         $username = $argument->get('username');
 
+        $password = hash('sha256', $argument->get('password'));
+
+        
         if ($this->userExists($username)) {
             throw new CommandException("Пользователь с таким {$username} логиномы уже существует");
         }
@@ -48,6 +51,7 @@ class CreateUsersCommands
             new User(
                 UUID::random(),
                 $username,
+                $password,
                 new Name(
                     $argument->get('first_name'),
                     $argument->get('last_name')
@@ -55,7 +59,7 @@ class CreateUsersCommands
             )
         );
 
-        $this->logger->info("Создан новый пользователь под логином:{$username}");
+        $this->logger->info("Создан новый пользователь через командню строку под логином:{$username}");
     }
 
     /**

@@ -1,6 +1,9 @@
 <?
-use GummerD\PHPnew\http\Request;
 
+use Psr\Log\LoggerInterface;
+use GummerD\PHPnew\http\Request;
+use GummerD\PHPnew\http\Actions\Auth\LogIn;
+use GummerD\PHPnew\http\Actions\Auth\LogOut;
 use GummerD\PHPnew\Exceptions\App\AppException;
 use GummerD\PHPnew\http\Response\ErrorResponse;
 use GummerD\PHPnew\Exceptions\http\HttpException;
@@ -17,7 +20,6 @@ use GummerD\PHPnew\http\Actions\Posts\ActionFindPostById;
 use GummerD\PHPnew\http\Actions\Users\ActionFindByUsername;
 use GummerD\PHPnew\http\Actions\Comments\ActionFindCommentById;
 use GummerD\PHPnew\http\Actions\Likes\ActionFindAllPostsByLikeId;
-use Psr\Log\LoggerInterface;
 
 $container = require(__DIR__ . '/bootstrap.php');
 
@@ -55,6 +57,8 @@ $routes = [
 
     ],
     'POST' => [
+        '/logout' => LogOut::class,
+        '/login' => LogIn::class,
         '/create/new_user'=> CreateUser::class,
         '/create/new_post' => CreatePost::class,
         '/create/new_comment' => CreateComment::class,

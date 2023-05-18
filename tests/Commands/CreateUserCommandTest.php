@@ -21,7 +21,7 @@ class CreateUserCommandTest extends TestCase
 {
     public function testItThrowsAnExceptionWhenUserAlreadyExists(): void
     {
-        $command = new CreateUsersCommands(new DummyUserRepository(),new DummyLogger());
+        $command = new CreateUsersCommands(new DummyUserRepository(), new DummyLogger());
 
         $this->expectException(CommandException::class);
 
@@ -54,7 +54,6 @@ class CreateUserCommandTest extends TestCase
 
             public function delete($id): void
             {
-
             }
         };
     }
@@ -96,7 +95,7 @@ class CreateUserCommandTest extends TestCase
             }
 
             public function getByUserId($id): User
-            {   
+            {
                 $id = new UUID($id);
 
                 throw new UserNotFoundException("Пользователя с таким id:{$id} не существует");
@@ -118,7 +117,6 @@ class CreateUserCommandTest extends TestCase
 
             public function delete($id): void
             {
-
             }
         };
 
@@ -135,5 +133,20 @@ class CreateUserCommandTest extends TestCase
         // Проверяем утверждение относительно мока,
         // а не утверждение относительно команды
         $this->assertTrue($usersRepository->wasCalled());
+    }
+
+    public function testItRequiresPassword(): void
+    {
+        $command = new CreateUsersCommands(
+            $this->makeUserRepository(),
+            new DummyLogger()
+        );
+
+        $this->expectException(ArgumentsException::class);
+        $this->expectExceptionMessage("Значение не найдено: password");
+
+        $command->handle(new Arguments([
+            'username' => 'Ivan',
+        ]));
     }
 }

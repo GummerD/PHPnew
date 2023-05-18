@@ -8,14 +8,20 @@ use GummerD\PHPnew\Container\DIContainer;
 use GummerD\PHPnew\Repositories\UserRepo\SqliteUsersRepo;
 use GummerD\PHPnew\Repositories\LikesRepo\SqliteLikesRepo;
 use GummerD\PHPnew\Repositories\PostsRepo\SqlitePostsRepo;
+use GummerD\PHPnew\http\Authentication\PasswordAuthentication;
+use GummerD\PHPnew\http\Actions\Auth\BearetTokenAuthentuication;
 use GummerD\PHPnew\Repositories\CommentsRepo\SqliteCommentsRepo;
 use GummerD\PHPnew\http\Actions\Interfaces\IdentificationInterface;
+use GummerD\PHPnew\Interfaces\Authentication\AuthenticationInterface;
 use GummerD\PHPnew\Interfaces\IRepositories\LikesRepositoryInterface;
 use GummerD\PHPnew\Interfaces\IRepositories\UsersRepositoryInterface;
+use GummerD\PHPnew\Repositories\TokenRepo\SqliteAuthTokensRepository;
 use GummerD\PHPnew\http\Identification\JsonBodyIdentificationUserById;
 use GummerD\PHPnew\Interfaces\IRepositories\PostsRepositoriesInterface;
+use GummerD\PHPnew\Interfaces\Authentication\TokenAuthenticationInterface;
 use GummerD\PHPnew\Interfaces\IRepositories\CommentsRepositoriesInterface;
-
+use GummerD\PHPnew\Interfaces\Authentication\AuthTokensRepositoryInterface;
+use GummerD\PHPnew\Interfaces\Authentication\PasswordAuthenticationInterface;
 
 require_once(__DIR__ . '/vendor/autoload.php');
 
@@ -77,5 +83,26 @@ $container->bind(
     IdentificationInterface::class,
     JsonBodyIdentificationUserById::class,
 );
+
+$container->bind(
+    AuthenticationInterface::class,
+    PasswordAuthentication::class
+);
+
+$container->bind(
+    PasswordAuthenticationInterface::class,
+    PasswordAuthentication::class
+);
+
+$container->bind(
+    AuthTokensRepositoryInterface::class,
+    SqliteAuthTokensRepository::class
+);
+
+$container->bind(
+    TokenAuthenticationInterface::class,
+    BearetTokenAuthentuication::class
+);
+
 
 return $container;
