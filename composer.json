@@ -15,7 +15,7 @@
         "email": "denis_gummer@mail.ru"
     }],
     "require": {
-        "fakerphp/faker": "^1.21",
+        "fakerphp/faker": "^1.22",
         "ramsey/uuid": "^4.7",
         "symfony/polyfill-uuid": "^1.27",
         "phpunit/phpunit": "^10.0",
@@ -35,6 +35,7 @@
         "test_HW_comments": "vendor\\bin\\phpunit tests\\HW_3\\CommentsTest --testdox --colors",
         "test_HW_posts": "vendor\\bin\\phpunit tests\\HW_3\\PostsTests --testdox --colors",
         "test_di_container": "vendor\\bin\\phpunit tests\\DIContainer --testdox --colors",
-        "test_user": "vendor\\bin\\phpunit tests\\UserTest --testdox --colors"
+        "test_user": "vendor\\bin\\phpunit tests\\UserTest --testdox --colors",
+        "test_user_command": "vendor\\bin\\phpunit tests\\Commands\\UserCreateCommandTest.php --testdox --colors"
     }
 }

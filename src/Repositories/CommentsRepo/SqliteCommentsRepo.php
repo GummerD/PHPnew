@@ -170,11 +170,14 @@ class SqliteCommentsRepo implements CommentsRepositoriesInterface
             throw new CommentNotFoundException(
                 "Комментария с таким {$name}:{$variable} нет в БД"
             );
+
+            return false;
         }
 
         $user = new User(
             new UUID($result['owner_id']),
             $result['username'],
+            $result['password'],
             new Name($result['first_name'], $result['last_name'])
         );
 

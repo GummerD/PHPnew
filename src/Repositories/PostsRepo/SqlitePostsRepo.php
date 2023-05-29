@@ -150,6 +150,8 @@ class SqlitePostsRepo implements PostsRepositoriesInterface
             throw new PostNotFoundException(
                 "Поста с таким {$name}:{$variable} не существует."
             );
+
+            return false;
         }
 
         $user = new User(

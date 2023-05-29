@@ -44,10 +44,23 @@ class DummyUserRepository implements UsersRepositoryInterface
         return new User(
             UUID::random(),
             $username,
+            'some_password',
             new Name(
                 'Ivan',
                 'Ivanov'
             )
         );
     }
+
+    public function UserExists($username): bool
+    {
+        return true;
+    }
+
+    public function delete($username): void
+    {
+
+    }
+
+
 }
